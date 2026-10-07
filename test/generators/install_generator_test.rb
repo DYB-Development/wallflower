@@ -22,6 +22,10 @@ class Wallflower::Generators::InstallGeneratorTest < ActiveSupport::TestCase
     assert_includes migration, "create_table :wallflower_tasks"
   end
 
+  test "the migration gives each task the person who started it" do
+    assert_includes migration, "t.references :person, polymorphic: true, null: false"
+  end
+
   private
 
   def migration
