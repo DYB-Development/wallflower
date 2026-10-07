@@ -5,6 +5,7 @@ module Wallflower
     def perform
       Task.where(status: "running").where(updated_at: ...Wallflower.configuration.stall_after.ago).find_each do |task|
         task.update!(status: "failed", error_message: "Stalled: no progress for #{Wallflower.configuration.stall_after.inspect}")
+        Wallflower.configuration.on_finish&.call(task)
       end
     end
   end

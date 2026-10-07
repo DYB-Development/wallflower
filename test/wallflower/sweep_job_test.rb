@@ -43,4 +43,14 @@ class Wallflower::SweepJobTest < ActiveSupport::TestCase
 
     assert_equal "failed", task.reload.status
   end
+
+  test "runs the host's finish hook once with a task it marks stalled" do
+    called = []
+    Wallflower.configure { |config| config.on_finish = ->(task) { called << task.error_message } }
+    running_since(2.hours.ago)
+
+    Wallflower::SweepJob.perform_now
+
+    assert_equal [ "Stalled: no progress for 1 hour" ], called
+  end
 end
