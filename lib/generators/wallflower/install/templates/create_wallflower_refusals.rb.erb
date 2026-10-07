@@ -1,0 +1,10 @@
+class CreateWallflowerRefusals < ActiveRecord::Migration[<%= ActiveRecord::Migration.current_version %>]
+  def change
+    create_table :wallflower_refusals do |t|
+      t.references :task, null: false, foreign_key: { to_table: :wallflower_tasks }
+      t.string :label, null: false
+      t.string :reason, null: false
+      t.timestamps
+    end
+  end
+end

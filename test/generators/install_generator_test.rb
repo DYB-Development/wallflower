@@ -30,6 +30,10 @@ class Wallflower::Generators::InstallGeneratorTest < ActiveSupport::TestCase
     assert_includes migration, "t.references :account, polymorphic: true, null: true"
   end
 
+  test "copies a migration that creates the refusals table" do
+    assert_includes File.read(Dir.glob("#{destination}/db/migrate/*_create_wallflower_refusals.rb").first.to_s), "create_table :wallflower_refusals"
+  end
+
   private
 
   def migration

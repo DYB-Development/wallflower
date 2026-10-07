@@ -102,4 +102,28 @@ class TaskPageTest < ActionDispatch::IntegrationTest
 
     assert_response :not_found
   end
+
+  test "a finished task's page shows how many rows were changed and how many were refused" do
+    task(status: "finished", total: 3, done: 3).refuse(label: "Row 2", reason: "Amount is missing")
+
+    get "/background/tasks/#{task.id}"
+
+    assert_select "#outcome_task_#{task.id}", text: "2 changed, 1 refused"
+  end
+
+  test "a finished task's page lists each refused row with its reason" do
+    task(status: "finished", total: 3, done: 3)
+    task.refuse(label: "Row 2", reason: "Amount is missing")
+    task.refuse(label: "Row 3", reason: "Date is not a date")
+
+    get "/background/tasks/#{task.id}"
+
+    assert_equal [ [ "Row 2", "Amount is missing" ], [ "Row 3", "Date is not a date" ] ], css_select("#refusals_task_#{task.id} tbody tr").map { |row| row.css("td").map { |cell| cell.text.strip } }
+  end
+
+  test "a finished task that refused no rows shows no list of refused rows" do
+    get "/background/tasks/#{task(status: "finished", total: 3, done: 3).id}"
+
+    assert_select "#refusals_task_#{task.id}", count: 0
+  end
 end
