@@ -34,4 +34,13 @@ class Wallflower::SweepJobTest < ActiveSupport::TestCase
 
     assert_equal "running", task.reload.status
   end
+
+  test "uses the stall limit the host sets" do
+    Wallflower.configure { |config| config.stall_after = 10.minutes }
+    task = running_since(20.minutes.ago)
+
+    Wallflower::SweepJob.perform_now
+
+    assert_equal "failed", task.reload.status
+  end
 end
