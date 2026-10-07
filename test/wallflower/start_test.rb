@@ -3,6 +3,8 @@
 require "test_helper"
 
 class Wallflower::StartTest < ActiveSupport::TestCase
+  include ActiveJob::TestHelper
+
   def person
     @person ||= User.create!(name: "Rep")
   end
@@ -11,5 +13,11 @@ class Wallflower::StartTest < ActiveSupport::TestCase
     task = Wallflower.start(kind: :export, person: person, params: { "month" => "2026-10" })
 
     assert_equal "queued", task.status
+  end
+
+  test "starting a task enqueues the job that runs it" do
+    task = nil
+
+    assert_enqueued_with(job: Wallflower::RunJob) { task = Wallflower.start(kind: :export, person: person) }
   end
 end
