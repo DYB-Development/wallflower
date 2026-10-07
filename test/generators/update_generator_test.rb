@@ -31,4 +31,11 @@ class Wallflower::Generators::UpdateGeneratorTest < ActiveSupport::TestCase
 
     assert_equal 1, migrations_named("create_wallflower_refusals").size
   end
+
+  test "adds nothing the app already has when it runs again" do
+    update
+    update
+
+    assert_equal 1, migrations_named("create_wallflower_refusals").size
+  end
 end
