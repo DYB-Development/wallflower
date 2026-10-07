@@ -75,4 +75,14 @@ class Wallflower::SweepJobTest < ActiveSupport::TestCase
 
     assert_not Wallflower::Task.exists?(task.id)
   end
+
+  test "records when a stalled task ended" do
+    task = nil
+    travel_to(Time.utc(2026, 10, 7, 12, 0, 0)) do
+      task = running_since(2.hours.ago)
+      Wallflower::SweepJob.perform_now
+    end
+
+    assert_equal Time.utc(2026, 10, 7, 12, 0, 0), task.reload.finished_at
+  end
 end

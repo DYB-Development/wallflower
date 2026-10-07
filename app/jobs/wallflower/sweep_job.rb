@@ -18,7 +18,7 @@ module Wallflower
 
     def fail_stalled
       Task.where(status: "running").where(updated_at: ...Wallflower.configuration.stall_after.ago).find_each do |task|
-        task.update!(status: "failed", error_message: "Stalled: no progress for #{Wallflower.configuration.stall_after.inspect}")
+        task.update!(status: "failed", error_message: "Stalled: no progress for #{Wallflower.configuration.stall_after.inspect}", finished_at: Time.current)
         Wallflower.configuration.on_finish&.call(task)
       end
     end
