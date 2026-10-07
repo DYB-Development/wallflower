@@ -10,6 +10,13 @@ module Wallflower
       head :not_found unless @task
     end
 
+    def download
+      task = visible_tasks.find_by(id: params[:id])
+      return head :not_found unless task&.result_file&.attached?
+
+      send_data task.result_file.download, filename: task.result_file.filename.to_s, type: task.result_file.content_type
+    end
+
     private
 
     def visible_tasks

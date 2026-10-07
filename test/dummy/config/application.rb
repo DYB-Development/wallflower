@@ -9,6 +9,7 @@ require "active_job/railtie"
 require "action_controller/railtie"
 require "action_view/railtie"
 require "action_cable/engine"
+require "active_storage/engine"
 
 Bundler.require(*Rails.groups)
 require "wallflower"

@@ -77,4 +77,29 @@ class TaskPageTest < ActionDispatch::IntegrationTest
 
     assert_select "#progress_task_#{task.id} *", count: 0
   end
+
+  test "a finished task's page offers a download of its file" do
+    task(status: "finished").attach_result(io: StringIO.new("a,b\n"), filename: "transactions.csv")
+
+    get "/background/tasks/#{task.id}"
+
+    assert_select "a[href=?]", "/background/tasks/#{task.id}/download", text: "Download"
+  end
+
+  test "the person who started a task receives its file when they follow the download" do
+    task(status: "finished").attach_result(io: StringIO.new("month,total\n2026-10,42\n"), filename: "transactions.csv")
+
+    get "/background/tasks/#{task.id}/download"
+
+    assert_equal "month,total\n2026-10,42\n", response.body
+  end
+
+  test "anyone else following a task's download link gets a not-found response" do
+    task(status: "finished").attach_result(io: StringIO.new("a,b\n"), filename: "transactions.csv")
+    ApplicationController.signed_in_user = User.create!(name: "Teammate")
+
+    get "/background/tasks/#{task.id}/download"
+
+    assert_response :not_found
+  end
 end
