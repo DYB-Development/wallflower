@@ -3,6 +3,7 @@
 module Wallflower
   class TasksController < ApplicationController
     def index
+      @tasks = visible_tasks.order(created_at: :desc)
     end
 
     def show

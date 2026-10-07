@@ -1,1 +1,6 @@
 <h1>Tasks</h1>
+<% @tasks.each do |task| %>
+  <div data-task-row>
+    <%= link_to task.kind_title, task_path(task) %>
+  </div>
+<% end %>
