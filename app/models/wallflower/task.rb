@@ -7,6 +7,10 @@ module Wallflower
     belongs_to :person, polymorphic: true
     belongs_to :account, polymorphic: true, optional: true
 
+    after_update_commit do
+      broadcast_replace_to self, target: ActionView::RecordIdentifier.dom_id(self, :live), partial: "wallflower/tasks/live", locals: { task: self }
+    end
+
     def kind_title
       Wallflower.kind(kind).title
     end
@@ -16,7 +20,7 @@ module Wallflower
     end
 
     def advance(by = 1)
-      increment!(:done, by)
+      increment(:done, by).save!
     end
   end
 end
