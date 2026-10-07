@@ -23,7 +23,9 @@ Gem::Specification.new do |spec|
     Dir["{app,config,db,lib}/**/*", "MIT-LICENSE", "Rakefile", "README.md"]
   end
 
+  spec.add_dependency "keystone_ui", ">= 0.37.0"
   spec.add_dependency "railties", ">= 7.0"
+  spec.add_dependency "turbo-rails", ">= 2.0"
   spec.add_dependency "activerecord", ">= 7.0"
   spec.add_dependency "activesupport", ">= 7.0"
 end

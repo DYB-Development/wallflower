@@ -1,3 +1,5 @@
+require "keystone_ui"
+require "turbo-rails"
 require "wallflower/version"
 require "wallflower/configuration"
 require "wallflower/kinds"

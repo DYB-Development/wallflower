@@ -1,0 +1,5 @@
+<%= turbo_stream_from @task %>
+<%= ui_page(max_width: :md) do %>
+  <h1><%= @task.kind_title %></h1>
+  <%= render "wallflower/tasks/live", task: @task %>
+<% end %>

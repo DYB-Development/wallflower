@@ -64,3 +64,9 @@ task = Wallflower.start(kind: :export_transactions, person: current_user, accoun
 ```
 
 The task is returned queued and its job is enqueued. When the job runs, the task is marked running, its runner is called, and when the runner returns the task is marked finished with the time it finished.
+
+## The task page
+
+A task's page lives at `tasks/:id` under the engine's mount path. The person who started the task sees its kind's title, its status and, once the runner has set a total, a progress bar of done against total. The page listens for changes to its task over Turbo Streams, so its status and progress update without a reload, in a browser and in the Hotwire Native iOS app alike. Anyone else, and the same person viewing from another account, gets a not-found response.
+
+Wallflower's pages are drawn with keystone_ui, and live updates need Action Cable and turbo-rails, which the host's layout already loads for Turbo Streams.

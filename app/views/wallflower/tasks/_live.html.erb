@@ -1,0 +1,8 @@
+<div id="<%= dom_id(task, :live) %>">
+  <p id="<%= dom_id(task, :status) %>"><%= task.status.humanize %></p>
+  <div id="<%= dom_id(task, :progress) %>">
+    <% if task.total %>
+      <%= render Keystone::Ui::ProgressComponent.new(value: task.done, max: task.total, label: "#{task.done} of #{task.total}") %>
+    <% end %>
+  </div>
+</div>
