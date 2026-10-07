@@ -39,4 +39,13 @@ class TaskListTest < ActionDispatch::IntegrationTest
 
     assert_select "[data-task-row]", text: /Export transactions.*Running.*3 of 10.*Started Oct 7, 2026/m
   end
+
+  test "each row of the task list listens for changes to its task" do
+    started(at: 2.days.ago)
+    started(at: 1.day.ago)
+
+    get "/background"
+
+    assert_select "[data-task-row] turbo-cable-stream-source", count: 2
+  end
 end
