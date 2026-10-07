@@ -7,6 +7,10 @@ export default class extends Controller {
     this.page.addEventListener("visibilitychange", this.catchUp)
   }
 
+  disconnect() {
+    this.page.removeEventListener("visibilitychange", this.catchUp)
+  }
+
   catchUp() {
     if (this.page.visibilityState !== "visible") return
 

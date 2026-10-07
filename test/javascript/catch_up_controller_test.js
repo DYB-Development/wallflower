@@ -46,3 +46,13 @@ test("a page that is hidden and not shown again makes no request", () => {
 
   assert.deepEqual(page.visits, [])
 })
+
+test("a page left before it is shown again makes no request", () => {
+  const page = pageAt("http://example.test/wallflower/tasks/1")
+  catchUpOn(page).disconnect()
+
+  page.becomes("hidden")
+  page.becomes("visible")
+
+  assert.deepEqual(page.visits, [])
+})
