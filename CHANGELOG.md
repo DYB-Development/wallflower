@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Added
+- The engine's root lists a person's tasks in the current account, newest first, each row showing its title, status, progress and start date, linking to its page and updating while it runs.
+
 ## [0.1.0] - 2026-10-07
 
 ### Added
