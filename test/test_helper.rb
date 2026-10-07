@@ -13,6 +13,11 @@ ActiveRecord::Schema.define do
   create_table :accounts, force: true do |t|
     t.string :name
   end
+
+  create_table :notifications, force: true do |t|
+    t.references :user, null: false
+    t.string :message, null: false
+  end
 end
 
 ActiveRecord::Migration.verbose = false
