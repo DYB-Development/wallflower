@@ -108,6 +108,25 @@ end
 
 With no `on_finish` set, tasks still run to the end.
 
+## When a task fails
+
+A runner that raises marks its task failed. The task keeps the error's message, its page shows it beside how far the task got, the error is reported through `Rails.error`, and `on_finish` runs once with the failed task.
+
+A task still running with no update for longer than `stall_after`, one hour by default, is marked failed by `Wallflower::SweepJob`, with a reason saying it stalled. Schedule the sweep the way the app schedules any recurring job, for example in Solid Queue's `config/recurring.yml`:
+
+```yaml
+production:
+  wallflower_sweep:
+    class: Wallflower::SweepJob
+    schedule: every 10 minutes
+```
+
+```ruby
+Wallflower.configure do |config|
+  config.stall_after = 30.minutes
+end
+```
+
 ## The task list
 
 The engine's root lists the tasks the signed-in person started in the current account, newest first. Each row shows the kind's title, the status, the progress and when it was started, links to the task's page, and updates while the task runs.
