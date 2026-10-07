@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Added
+- `config.keep_for` lets a host set how long finished and failed tasks are kept, and the sweep deletes older ones with their files and refused rows. Unset, every task is kept.
+- A task that fails or stalls records when it ended in `finished_at`.
+
 ### Changed
 - `task.advance` saves progress at most once a second, however often a runner calls it, and the save that finishes or fails the task writes the final count.
 

@@ -124,8 +124,11 @@ production:
 ```ruby
 Wallflower.configure do |config|
   config.stall_after = 30.minutes
+  config.keep_for = 90.days # unset by default, which keeps every task forever
 end
 ```
+
+With `keep_for` set, the same sweep deletes each finished or failed task that ended longer ago than that, with its file and its refused rows. Queued and running tasks stay, however old. With it unset, nothing is ever deleted.
 
 ## The task list
 
