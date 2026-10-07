@@ -21,4 +21,12 @@ class Wallflower::TaskBroadcastTest < ActiveSupport::TestCase
 
     assert_includes broadcasts.last.to_html, "3 of 10"
   end
+
+  test "one broadcast for a task replaces the part its page and its list row share" do
+    task = Wallflower::Task.create!(kind: "export", person: User.create!(name: "Rep"), total: 10)
+
+    broadcasts = capture_turbo_stream_broadcasts(task) { task.advance }
+
+    assert_equal "live_task_#{task.id}", broadcasts.last["target"]
+  end
 end
