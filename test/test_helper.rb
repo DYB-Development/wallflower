@@ -15,4 +15,9 @@ ActiveRecord::Schema.define do
   end
 end
 
+ActiveRecord::Migration.verbose = false
+install_migration = File.expand_path("../lib/generators/wallflower/install/templates/create_wallflower_tasks.rb.erb", __dir__)
+eval(ERB.new(File.read(install_migration)).result) # rubocop:disable Security/Eval
+CreateWallflowerTasks.migrate(:up)
+
 Rails.application.config.action_dispatch.show_exceptions = :none

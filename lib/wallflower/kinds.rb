@@ -25,6 +25,10 @@ module Wallflower
     end
   end
 
+  def self.start(kind:, person:, account: nil, params: {})
+    Task.create!(kind: kind.to_s, person: person, account: account, params: params)
+  end
+
   def self.reset_kinds!
     @kinds = {}
   end

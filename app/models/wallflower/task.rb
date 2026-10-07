@@ -1,0 +1,10 @@
+# frozen_string_literal: true
+
+module Wallflower
+  class Task < ApplicationRecord
+    self.table_name = "wallflower_tasks"
+
+    belongs_to :person, polymorphic: true
+    belongs_to :account, polymorphic: true, optional: true
+  end
+end
