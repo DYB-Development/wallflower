@@ -37,3 +37,12 @@ test("a page shown again after being hidden reloads itself in place", () => {
 
   assert.deepEqual(page.visits, [{ url: "http://example.test/wallflower/tasks/1", options: { action: "replace" } }])
 })
+
+test("a page that is hidden and not shown again makes no request", () => {
+  const page = pageAt("http://example.test/wallflower/tasks/1")
+  catchUpOn(page)
+
+  page.becomes("hidden")
+
+  assert.deepEqual(page.visits, [])
+})
