@@ -34,6 +34,10 @@ class Wallflower::Generators::InstallGeneratorTest < ActiveSupport::TestCase
     assert_includes File.read(Dir.glob("#{destination}/db/migrate/*_create_wallflower_refusals.rb").first.to_s), "create_table :wallflower_refusals"
   end
 
+  test "copies a migration that gives each task a result link" do
+    assert_includes File.read(Dir.glob("#{destination}/db/migrate/*_add_result_url_to_wallflower_tasks.rb").first.to_s), "add_column :wallflower_tasks, :result_url, :string"
+  end
+
   private
 
   def migration
