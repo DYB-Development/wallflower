@@ -85,4 +85,12 @@ class Wallflower::SweepJobTest < ActiveSupport::TestCase
 
     assert_equal Time.utc(2026, 10, 7, 12, 0, 0), task.reload.finished_at
   end
+
+  test "with no keep period set, deletes nothing" do
+    task = ended("finished", at: 5.years.ago)
+
+    Wallflower::SweepJob.perform_now
+
+    assert Wallflower::Task.exists?(task.id)
+  end
 end
