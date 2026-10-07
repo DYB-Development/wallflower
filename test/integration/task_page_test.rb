@@ -26,4 +26,10 @@ class TaskPageTest < ActionDispatch::IntegrationTest
 
     assert_select "h1", text: "Export transactions"
   end
+
+  test "the person who started a task sees its status on its page" do
+    get "/background/tasks/#{task(status: "running").id}"
+
+    assert_select "#status_task_#{task.id}", text: "Running"
+  end
 end

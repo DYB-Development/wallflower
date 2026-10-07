@@ -1,3 +1,4 @@
 <%= ui_page(max_width: :md) do %>
   <h1><%= @task.kind_title %></h1>
+  <p id="<%= dom_id(@task, :status) %>"><%= @task.status.humanize %></p>
 <% end %>
