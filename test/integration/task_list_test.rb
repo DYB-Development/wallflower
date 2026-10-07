@@ -31,4 +31,12 @@ class TaskListTest < ActionDispatch::IntegrationTest
 
     assert_equal [ "/background/tasks/#{newer.id}", "/background/tasks/#{older.id}" ], css_select("[data-task-row] a").map { |link| link["href"] }
   end
+
+  test "each row shows the kind's title, the status, the progress and when it was started" do
+    started(at: Time.utc(2026, 10, 7, 9, 30), status: "running", total: 10, done: 3)
+
+    get "/background"
+
+    assert_select "[data-task-row]", text: /Export transactions.*Running.*3 of 10.*Started Oct 7, 2026/m
+  end
 end

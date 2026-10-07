@@ -2,5 +2,7 @@
 <% @tasks.each do |task| %>
   <div data-task-row>
     <%= link_to task.kind_title, task_path(task) %>
+    <%= render "wallflower/tasks/live", task: task %>
+    <p>Started <%= task.created_at.strftime("%b %-d, %Y") %></p>
   </div>
 <% end %>
