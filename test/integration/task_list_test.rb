@@ -66,4 +66,14 @@ class TaskListTest < ActionDispatch::IntegrationTest
 
     assert_select "[data-task-row]", count: 0
   end
+
+  test "a task's row shows the same status badge and progress bar as its page" do
+    task = started(at: 1.day.ago, status: "running", total: 10, done: 3)
+    get "/background/tasks/#{task.id}"
+    on_page = css_select("#live_task_#{task.id}").to_html
+
+    get "/background"
+
+    assert_equal on_page, css_select("#live_task_#{task.id}").to_html
+  end
 end
