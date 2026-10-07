@@ -18,4 +18,8 @@ class Wallflower::ConfigurationTest < ActiveSupport::TestCase
   test "treats a running task as stalled after an hour unless the host sets another limit" do
     assert_equal 1.hour, Wallflower.configuration.stall_after
   end
+
+  test "keeps every task forever unless the host sets a keep period" do
+    assert_nil Wallflower.configuration.keep_for
+  end
 end
