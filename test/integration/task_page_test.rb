@@ -164,4 +164,10 @@ class TaskPageTest < ActionDispatch::IntegrationTest
 
     assert_select "#status_task_#{task.id} .ks-badge-info", text: "Running"
   end
+
+  test "a queued task shows its status in a neutral badge" do
+    get "/background/tasks/#{task.id}"
+
+    assert_select "#status_task_#{task.id} .ks-badge-neutral", text: "Queued"
+  end
 end
