@@ -57,6 +57,14 @@ class ExportTransactionsRunner
 end
 ```
 
+A runner that produces a file attaches it as the task's result:
+
+```ruby
+task.attach_result(io: StringIO.new(csv), filename: "transactions.csv")
+```
+
+A finished task's page then offers a Download button. The file is sent through Wallflower's own route, which gives it only to the person who started the task and answers anyone else with not found.
+
 ## Starting a task
 
 ```ruby
