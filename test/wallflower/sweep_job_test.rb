@@ -7,6 +7,10 @@ class Wallflower::SweepJobTest < ActiveSupport::TestCase
     Wallflower.reset_configuration!
   end
 
+  def ended(status, at:)
+    Wallflower::Task.create!(kind: "export", person: User.create!(name: "Rep"), status: status, finished_at: at)
+  end
+
   def running_since(time)
     Wallflower::Task.create!(kind: "export", person: User.create!(name: "Rep"), status: "running", updated_at: time)
   end
@@ -52,5 +56,14 @@ class Wallflower::SweepJobTest < ActiveSupport::TestCase
     Wallflower::SweepJob.perform_now
 
     assert_equal [ "Stalled: no progress for 1 hour" ], called
+  end
+
+  test "with a keep period set, deletes a task that finished longer ago than the period" do
+    Wallflower.configure { |config| config.keep_for = 30.days }
+    task = ended("finished", at: 31.days.ago)
+
+    Wallflower::SweepJob.perform_now
+
+    assert_not Wallflower::Task.exists?(task.id)
   end
 end
