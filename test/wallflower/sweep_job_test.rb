@@ -93,4 +93,13 @@ class Wallflower::SweepJobTest < ActiveSupport::TestCase
 
     assert Wallflower::Task.exists?(task.id)
   end
+
+  test "deletes an old task's refused rows with it" do
+    Wallflower.configure { |config| config.keep_for = 30.days }
+    ended("finished", at: 31.days.ago).refuse(label: "Row 2", reason: "Amount is missing")
+
+    Wallflower::SweepJob.perform_now
+
+    assert_equal 0, Wallflower::Refusal.count
+  end
 end
