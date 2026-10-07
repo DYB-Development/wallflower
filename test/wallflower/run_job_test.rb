@@ -69,4 +69,12 @@ class Wallflower::RunJobTest < ActiveSupport::TestCase
 
     assert_equal [ task ], finished
   end
+
+  test "a host that configures no finish hook still runs its task to the end" do
+    task = Wallflower::Task.create!(kind: "export", person: person)
+
+    Wallflower::RunJob.perform_now(task)
+
+    assert_equal "finished", task.reload.status
+  end
 end
