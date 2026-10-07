@@ -146,4 +146,10 @@ class TaskPageTest < ActionDispatch::IntegrationTest
 
     assert_select "#progress_task_#{task.id}", text: /3 of 10/
   end
+
+  test "a finished task shows its status in a success badge" do
+    get "/background/tasks/#{task(status: "finished").id}"
+
+    assert_select "#status_task_#{task.id} .ks-badge-success", text: "Finished"
+  end
 end

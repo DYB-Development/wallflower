@@ -14,6 +14,12 @@ module Wallflower
       broadcast_replace_to self, target: ActionView::RecordIdentifier.dom_id(self, :live), partial: "wallflower/tasks/live", locals: { task: self }
     end
 
+    STATUS_VARIANTS = { "finished" => :success }.freeze
+
+    def status_variant
+      STATUS_VARIANTS.fetch(status, :neutral)
+    end
+
     def kind_title
       Wallflower.kind(kind).title
     end

@@ -1,5 +1,5 @@
 <div id="<%= dom_id(task, :live) %>">
-  <p id="<%= dom_id(task, :status) %>"><%= task.status.humanize %></p>
+  <p id="<%= dom_id(task, :status) %>"><%= render Keystone::Ui::BadgeComponent.new(label: task.status.humanize, variant: task.status_variant) %></p>
   <% if task.status == "failed" %>
     <p id="<%= dom_id(task, :error) %>"><%= task.error_message %></p>
   <% end %>
