@@ -42,6 +42,11 @@ class Wallflower::Generators::InstallGeneratorTest < ActiveSupport::TestCase
     assert_includes File.read(Dir.glob("#{destination}/db/migrate/*_add_error_message_to_wallflower_tasks.rb").first.to_s), "add_column :wallflower_tasks, :error_message, :text"
   end
 
+  test "copies the controller that catches a task page up when it is shown again" do
+    assert_equal File.read(File.expand_path("../../app/javascript/wallflower/catch_up_controller.js", __dir__)),
+                 File.read("#{destination}/app/javascript/controllers/wallflower/catch_up_controller.js")
+  end
+
   private
 
   def migration

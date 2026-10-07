@@ -4,7 +4,7 @@ Background task tracking for Rails apps: a person starts long-running work, foll
 
 ## Installation
 
-Add the gem and run its install generator, which copies a migration for its tasks table:
+Add the gem and run its install generator, which copies the migrations for its tables and a Stimulus controller to `app/javascript/controllers/wallflower/catch_up_controller.js`:
 
 ```ruby
 gem "wallflower"
@@ -16,7 +16,7 @@ bin/rails generate wallflower:install
 bin/rails db:migrate
 ```
 
-After updating the gem, run its update generator to copy any migrations added since it was installed, then migrate:
+After updating the gem, run its update generator to copy any migrations added since it was installed and the latest copy of its Stimulus controller, then migrate:
 
 ```bash
 bin/rails generate wallflower:update
@@ -137,5 +137,7 @@ The engine's root lists the tasks the signed-in person started in the current ac
 ## The task page
 
 A task's page lives at `tasks/:id` under the engine's mount path. The person who started the task sees its kind's title, its status and, once the runner has set a total, a progress bar of done against total. The page listens for changes to its task over Turbo Streams, so its status and progress update without a reload, in a browser and in the Hotwire Native iOS app alike. Anyone else, and the same person viewing from another account, gets a not-found response.
+
+The task page and the task list reload in place when they are shown again after being hidden, such as when the iOS app returns from the background, so they show changes broadcast while they could not receive them. A page that stays visible makes no extra request. The copied controller is registered by the host's own Stimulus setup, as `wallflower--catch-up`.
 
 Wallflower's pages are drawn with keystone_ui, and live updates need Action Cable and turbo-rails, which the host's layout already loads for Turbo Streams.

@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 
 ### Added
+- The task page and the task list reload in place when shown again after being hidden, so they catch up on changes made while the iOS app was in the background. `wallflower:install` and `wallflower:update` copy the Stimulus controller that does it.
 - `config.keep_for` lets a host set how long finished and failed tasks are kept, and the sweep deletes older ones with their files and refused rows. Unset, every task is kept.
 - A task that fails or stalls records when it ended in `finished_at`.
 
