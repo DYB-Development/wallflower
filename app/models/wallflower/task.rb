@@ -22,6 +22,10 @@ module Wallflower
       result_file.attach(io: io, filename: filename)
     end
 
+    def changed_count
+      done - refusals.size
+    end
+
     def refuse(label:, reason:)
       refusals.create!(label: label, reason: reason)
     end

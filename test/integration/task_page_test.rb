@@ -102,4 +102,12 @@ class TaskPageTest < ActionDispatch::IntegrationTest
 
     assert_response :not_found
   end
+
+  test "a finished task's page shows how many rows were changed and how many were refused" do
+    task(status: "finished", total: 3, done: 3).refuse(label: "Row 2", reason: "Amount is missing")
+
+    get "/background/tasks/#{task.id}"
+
+    assert_select "#outcome_task_#{task.id}", text: "2 changed, 1 refused"
+  end
 end

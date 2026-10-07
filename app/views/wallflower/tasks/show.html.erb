@@ -2,6 +2,9 @@
 <%= ui_page(max_width: :md) do %>
   <h1><%= @task.kind_title %></h1>
   <%= render "wallflower/tasks/live", task: @task %>
+  <% if @task.status == "finished" %>
+    <p id="<%= dom_id(@task, :outcome) %>"><%= @task.changed_count %> changed, <%= @task.refusals.size %> refused</p>
+  <% end %>
   <% if @task.status == "finished" && @task.result_file.attached? %>
     <%= ui_button(label: "Download", href: download_task_path(@task), variant: :secondary) %>
   <% end %>
