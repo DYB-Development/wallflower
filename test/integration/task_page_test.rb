@@ -65,4 +65,10 @@ class TaskPageTest < ActionDispatch::IntegrationTest
 
     assert_select "turbo-cable-stream-source"
   end
+
+  test "a task page opened in the Hotwire Native iOS app shows the same status and progress as in a browser" do
+    get "/background/tasks/#{task(status: "running", total: 10, done: 3).id}", headers: { "User-Agent" => "Mozilla/5.0 (iPhone) Turbo Native iOS" }
+
+    assert_select "#live_task_#{task.id}", text: /Running.*3 of 10/m
+  end
 end
