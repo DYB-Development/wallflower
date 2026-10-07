@@ -32,4 +32,10 @@ class TaskPageTest < ActionDispatch::IntegrationTest
 
     assert_select "#status_task_#{task.id}", text: "Running"
   end
+
+  test "the person who started a task sees a progress bar of done against total on its page" do
+    get "/background/tasks/#{task(total: 10, done: 3).id}"
+
+    assert_select "#progress_task_#{task.id} [role=progressbar], #progress_task_#{task.id}", text: /3 of 10/
+  end
 end
