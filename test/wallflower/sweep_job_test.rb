@@ -3,6 +3,8 @@
 require "test_helper"
 
 class Wallflower::SweepJobTest < ActiveSupport::TestCase
+  include ActiveJob::TestHelper
+
   def teardown
     Wallflower.reset_configuration!
   end
@@ -101,5 +103,14 @@ class Wallflower::SweepJobTest < ActiveSupport::TestCase
     Wallflower::SweepJob.perform_now
 
     assert_equal 0, Wallflower::Refusal.count
+  end
+
+  test "deletes an old task's file with it" do
+    Wallflower.configure { |config| config.keep_for = 30.days }
+    ended("finished", at: 31.days.ago).attach_result(io: StringIO.new("a,b\n"), filename: "export.csv")
+
+    perform_enqueued_jobs { Wallflower::SweepJob.perform_now }
+
+    assert_equal 0, ActiveStorage::Blob.count
   end
 end
