@@ -3,5 +3,7 @@
 module Wallflower
   class ApplicationController < ::ApplicationController
     before_action { send(Wallflower.configuration.authentication_method) }
+
+    layout -> { Wallflower.configuration.layout }
   end
 end

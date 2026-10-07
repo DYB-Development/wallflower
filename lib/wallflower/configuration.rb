@@ -2,10 +2,11 @@
 
 module Wallflower
   class Configuration
-    attr_accessor :authentication_method
+    attr_accessor :authentication_method, :layout
 
     def initialize
       @authentication_method = :authenticate_user!
+      @layout = "application"
     end
   end
 

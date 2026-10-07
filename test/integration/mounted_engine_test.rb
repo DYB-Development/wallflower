@@ -36,4 +36,12 @@ class MountedEngineTest < ActionDispatch::IntegrationTest
   ensure
     ApplicationController.remove_method(:refuse_everyone)
   end
+
+  test "draws its pages in the layout the host names" do
+    Wallflower.configure { |config| config.layout = "back_office" }
+
+    get "/background"
+
+    assert_select "#back-office"
+  end
 end
