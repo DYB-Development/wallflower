@@ -1,6 +1,12 @@
 class CreateWallflowerTasks < ActiveRecord::Migration[<%= ActiveRecord::Migration.current_version %>]
   def change
     create_table :wallflower_tasks do |t|
+      t.string :kind, null: false
+      t.string :status, null: false, default: "queued"
+      t.json :params, null: false, default: {}
+      t.integer :total
+      t.integer :done, null: false, default: 0
+      t.datetime :finished_at
       t.references :person, polymorphic: true, null: false
       t.references :account, polymorphic: true, null: true
       t.timestamps
