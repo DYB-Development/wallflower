@@ -18,4 +18,12 @@ class Wallflower::SweepJobTest < ActiveSupport::TestCase
 
     assert_equal "failed", task.reload.status
   end
+
+  test "gives a stalled task a reason saying it stalled" do
+    task = running_since(2.hours.ago)
+
+    Wallflower::SweepJob.perform_now
+
+    assert_equal "Stalled: no progress for 1 hour", task.reload.error_message
+  end
 end
