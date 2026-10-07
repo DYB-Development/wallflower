@@ -56,4 +56,14 @@ class TaskListTest < ActionDispatch::IntegrationTest
 
     assert_select "[data-task-row]", count: 0
   end
+
+  test "the list shows no task started in another account" do
+    Wallflower.configure { |config| config.current_account_method = :current_account }
+    started(at: 1.day.ago, account: Account.create!(name: "Team"))
+    ApplicationController.signed_in_account = Account.create!(name: "Other team")
+
+    get "/background"
+
+    assert_select "[data-task-row]", count: 0
+  end
 end
