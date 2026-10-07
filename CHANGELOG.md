@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Changed
+- A task's status shows as a badge coloured by status, the same on its page and its list row, both updated by one broadcast.
+
 ### Added
 - A task whose runner raises is marked failed with the error's message, which its page shows beside how far it got, and the error is reported through `Rails.error`.
 - `Wallflower::SweepJob` marks a task failed when it has run without an update past `stall_after`, one hour by default.

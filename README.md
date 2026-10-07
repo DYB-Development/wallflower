@@ -129,7 +129,7 @@ end
 
 ## The task list
 
-The engine's root lists the tasks the signed-in person started in the current account, newest first. Each row shows the kind's title, the status, the progress and when it was started, links to the task's page, and updates while the task runs.
+The engine's root lists the tasks the signed-in person started in the current account, newest first. Each row shows the kind's title, the status as a coloured badge, the progress and when it was started, links to the task's page, and updates while the task runs.
 
 ## The task page
 
