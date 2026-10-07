@@ -16,6 +16,7 @@ module Wallflower
         migration_template "create_wallflower_tasks.rb.erb", "db/migrate/create_wallflower_tasks.rb"
         migration_template "create_wallflower_refusals.rb.erb", "db/migrate/create_wallflower_refusals.rb"
         migration_template "add_result_url_to_wallflower_tasks.rb.erb", "db/migrate/add_result_url_to_wallflower_tasks.rb"
+        migration_template "add_error_message_to_wallflower_tasks.rb.erb", "db/migrate/add_error_message_to_wallflower_tasks.rb"
       end
     end
   end
