@@ -18,8 +18,17 @@ class Wallflower::RunJobTest < ActiveSupport::TestCase
     end
   end
 
+  class RaisingRunner
+    def call(task)
+      task.set_total(10)
+      3.times { task.advance }
+      raise ArgumentError, "Row 4 has no amount"
+    end
+  end
+
   def setup
     Wallflower.register_kind(:export, title: "Export transactions", runner: RecordingRunner.name)
+    Wallflower.register_kind(:broken, title: "Broken export", runner: RaisingRunner.name)
   end
 
   def teardown
@@ -76,5 +85,13 @@ class Wallflower::RunJobTest < ActiveSupport::TestCase
     Wallflower::RunJob.perform_now(task)
 
     assert_equal "finished", task.reload.status
+  end
+
+  test "a task whose runner raises is marked failed" do
+    task = Wallflower::Task.create!(kind: "broken", person: person)
+
+    Wallflower::RunJob.perform_now(task)
+
+    assert_equal "failed", task.reload.status
   end
 end
