@@ -5,6 +5,9 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 
 ### Changed
+- `task.advance` saves progress at most once a second, however often a runner calls it, and the save that finishes or fails the task writes the final count.
+
+### Changed
 - A task's status shows as a badge coloured by status, the same on its page and its list row, both updated by one broadcast.
 
 ### Added

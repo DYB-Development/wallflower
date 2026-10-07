@@ -84,7 +84,7 @@ A runner that works through rows can refuse one it cannot take, with a label for
 task.refuse(label: "Row 4", reason: "Amount is missing")
 ```
 
-Call `task.advance` for every row, refused or not. A finished task's page shows how many rows were changed (rows done less rows refused) and how many were refused, and lists each refused row with its reason.
+Call `task.advance` for every row, refused or not. `advance` saves at most once a second, so calling it for every row of a large task does not slow it down, and the final count is saved when the task finishes. A finished task's page shows how many rows were changed (rows done less rows refused) and how many were refused, and lists each refused row with its reason.
 
 A finished task's page then offers a Download button. The file is sent through Wallflower's own route, which gives it only to the person who started the task and answers anyone else with not found.
 
