@@ -21,5 +21,8 @@ CreateActiveStorageTables.migrate(:up)
 install_migration = File.expand_path("../lib/generators/wallflower/install/templates/create_wallflower_tasks.rb.erb", __dir__)
 eval(ERB.new(File.read(install_migration)).result) # rubocop:disable Security/Eval
 CreateWallflowerTasks.migrate(:up)
+refusals_migration = File.expand_path("../lib/generators/wallflower/install/templates/create_wallflower_refusals.rb.erb", __dir__)
+eval(ERB.new(File.read(refusals_migration)).result) # rubocop:disable Security/Eval
+CreateWallflowerRefusals.migrate(:up)
 
 Rails.application.config.action_dispatch.show_exceptions = :none

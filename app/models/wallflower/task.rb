@@ -8,6 +8,7 @@ module Wallflower
     belongs_to :account, polymorphic: true, optional: true
 
     has_one_attached :result_file
+    has_many :refusals, dependent: :destroy
 
     after_update_commit do
       broadcast_replace_to self, target: ActionView::RecordIdentifier.dom_id(self, :live), partial: "wallflower/tasks/live", locals: { task: self }
@@ -19,6 +20,10 @@ module Wallflower
 
     def attach_result(io:, filename:)
       result_file.attach(io: io, filename: filename)
+    end
+
+    def refuse(label:, reason:)
+      refusals.create!(label: label, reason: reason)
     end
 
     def set_total(total)
