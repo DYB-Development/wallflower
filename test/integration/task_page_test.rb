@@ -85,4 +85,12 @@ class TaskPageTest < ActionDispatch::IntegrationTest
 
     assert_select "a[href=?]", "/background/tasks/#{task.id}/download", text: "Download"
   end
+
+  test "the person who started a task receives its file when they follow the download" do
+    task(status: "finished").attach_result(io: StringIO.new("month,total\n2026-10,42\n"), filename: "transactions.csv")
+
+    get "/background/tasks/#{task.id}/download"
+
+    assert_equal "month,total\n2026-10,42\n", response.body
+  end
 end
