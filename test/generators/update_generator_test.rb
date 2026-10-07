@@ -38,4 +38,10 @@ class Wallflower::Generators::UpdateGeneratorTest < ActiveSupport::TestCase
 
     assert_equal 1, migrations_named("create_wallflower_refusals").size
   end
+
+  test "adds the result link to an app that installed earlier" do
+    update
+
+    assert_equal 1, migrations_named("add_result_url_to_wallflower_tasks").size
+  end
 end

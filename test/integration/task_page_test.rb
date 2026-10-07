@@ -126,4 +126,12 @@ class TaskPageTest < ActionDispatch::IntegrationTest
 
     assert_select "#refusals_task_#{task.id}", count: 0
   end
+
+  test "a finished task's page offers the link to its report" do
+    task(status: "finished").link_result("/console/reports/42")
+
+    get "/background/tasks/#{task.id}"
+
+    assert_select "a[href=?]", "/console/reports/42", text: "Open report"
+  end
 end

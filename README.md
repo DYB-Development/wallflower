@@ -70,6 +70,14 @@ A runner that produces a file attaches it as the task's result:
 task.attach_result(io: StringIO.new(csv), filename: "transactions.csv")
 ```
 
+A runner whose result is a page in the app, such as a report, links the task to it:
+
+```ruby
+task.link_result(console_report_path(report))
+```
+
+A finished task's page then offers an Open report button. The page itself stays the app's to draw.
+
 A runner that works through rows can refuse one it cannot take, with a label for the row and a reason:
 
 ```ruby

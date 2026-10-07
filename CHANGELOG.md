@@ -5,6 +5,9 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 
 ### Added
+- A runner links its task to a page in the host app with `task.link_result`, and a finished task's page offers an Open report button. `wallflower:update` adds the column to an app that installed earlier.
+
+### Added
 - A runner records a refused row with `task.refuse(label:, reason:)`, and a finished task's page shows how many rows were changed and refused and lists each refused row with its reason.
 - `wallflower:update` copies the migrations added since an app installed, starting with the refusals table.
 - The engine's root lists a person's tasks in the current account, newest first, each row showing its title, status, progress and start date, linking to its page and updating while it runs.

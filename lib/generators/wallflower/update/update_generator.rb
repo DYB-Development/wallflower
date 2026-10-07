@@ -15,6 +15,10 @@ module Wallflower
       def copy_refusals_migration
         migration_template "create_wallflower_refusals.rb.erb", "db/migrate/create_wallflower_refusals.rb"
       end
+
+      def copy_result_url_migration
+        migration_template "add_result_url_to_wallflower_tasks.rb.erb", "db/migrate/add_result_url_to_wallflower_tasks.rb"
+      end
     end
   end
 end

@@ -10,6 +10,9 @@
       </div>
     <% end %>
   <% end %>
+  <% if @task.status == "finished" && @task.result_url.present? %>
+    <%= ui_button(label: "Open report", href: @task.result_url, variant: :secondary) %>
+  <% end %>
   <% if @task.status == "finished" && @task.result_file.attached? %>
     <%= ui_button(label: "Download", href: download_task_path(@task), variant: :secondary) %>
   <% end %>
