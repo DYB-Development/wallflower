@@ -4,6 +4,11 @@
   <%= render "wallflower/tasks/live", task: @task %>
   <% if @task.status == "finished" %>
     <p id="<%= dom_id(@task, :outcome) %>"><%= @task.changed_count %> changed, <%= @task.refusals.size %> refused</p>
+    <% if @task.refusals.any? %>
+      <div id="<%= dom_id(@task, :refusals) %>">
+        <%= ui_data_table(items: @task.refusals.order(:id), columns: [ { label: "Row" }, { reason: "Reason" } ]) %>
+      </div>
+    <% end %>
   <% end %>
   <% if @task.status == "finished" && @task.result_file.attached? %>
     <%= ui_button(label: "Download", href: download_task_path(@task), variant: :secondary) %>

@@ -110,4 +110,14 @@ class TaskPageTest < ActionDispatch::IntegrationTest
 
     assert_select "#outcome_task_#{task.id}", text: "2 changed, 1 refused"
   end
+
+  test "a finished task's page lists each refused row with its reason" do
+    task(status: "finished", total: 3, done: 3)
+    task.refuse(label: "Row 2", reason: "Amount is missing")
+    task.refuse(label: "Row 3", reason: "Date is not a date")
+
+    get "/background/tasks/#{task.id}"
+
+    assert_equal [ [ "Row 2", "Amount is missing" ], [ "Row 3", "Date is not a date" ] ], css_select("#refusals_task_#{task.id} tbody tr").map { |row| row.css("td").map { |cell| cell.text.strip } }
+  end
 end
