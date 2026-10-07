@@ -12,4 +12,12 @@ class Wallflower::KindsTest < ActiveSupport::TestCase
 
     assert_equal [ "Export transactions", "ExportRunner" ], [ Wallflower.kind(:export).title, Wallflower.kind(:export).runner ]
   end
+
+  test "a kind whose runner class does not exist stops the app booting with a message naming the class" do
+    Wallflower.register_kind(:export, title: "Export transactions", runner: "MissingExportRunner")
+
+    error = assert_raises(Wallflower::MissingRunner) { Wallflower.check_kinds! }
+
+    assert_includes error.message, "MissingExportRunner"
+  end
 end
