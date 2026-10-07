@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [Unreleased]
+## [0.2.0] - 2026-10-07
 
 ### Added
 - The task page and the task list reload in place when shown again after being hidden, so they catch up on changes made while the iOS app was in the background. `wallflower:install` and `wallflower:update` copy the Stimulus controller that does it.
