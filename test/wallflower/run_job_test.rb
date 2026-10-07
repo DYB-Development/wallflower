@@ -11,6 +11,13 @@ class Wallflower::RunJobTest < ActiveSupport::TestCase
     end
   end
 
+  class CountingRunner
+    def call(task)
+      task.set_total(10)
+      3.times { task.advance }
+    end
+  end
+
   def setup
     Wallflower.register_kind(:export, title: "Export transactions", runner: RecordingRunner.name)
   end
@@ -33,5 +40,14 @@ class Wallflower::RunJobTest < ActiveSupport::TestCase
     Wallflower::RunJob.perform_now(task)
 
     assert_equal [ "running", { "month" => "2026-10" }, person, account ], RecordingRunner.seen
+  end
+
+  test "a runner sets the task's total and adds to its done count while it works" do
+    Wallflower.register_kind(:count, title: "Count rows", runner: CountingRunner.name)
+    task = Wallflower::Task.create!(kind: "count", person: person)
+
+    Wallflower::RunJob.perform_now(task)
+
+    assert_equal [ 10, 3 ], task.reload.values_at(:total, :done)
   end
 end

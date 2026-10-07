@@ -6,5 +6,13 @@ module Wallflower
 
     belongs_to :person, polymorphic: true
     belongs_to :account, polymorphic: true, optional: true
+
+    def set_total(total)
+      update!(total: total)
+    end
+
+    def advance(by = 1)
+      increment!(:done, by)
+    end
   end
 end
