@@ -24,6 +24,7 @@ class Wallflower::RunJobTest < ActiveSupport::TestCase
 
   def teardown
     Wallflower.reset_kinds!
+    Wallflower.reset_configuration!
   end
 
   def person
@@ -57,5 +58,23 @@ class Wallflower::RunJobTest < ActiveSupport::TestCase
     travel_to(Time.utc(2026, 10, 7, 12, 0, 0)) { Wallflower::RunJob.perform_now(task) }
 
     assert_equal [ "finished", Time.utc(2026, 10, 7, 12, 0, 0) ], task.reload.values_at(:status, :finished_at)
+  end
+
+  test "the host's finish hook runs once with the task when it finishes" do
+    finished = []
+    Wallflower.configure { |config| config.on_finish = ->(task) { finished << task } }
+    task = Wallflower::Task.create!(kind: "export", person: person)
+
+    Wallflower::RunJob.perform_now(task)
+
+    assert_equal [ task ], finished
+  end
+
+  test "a host that configures no finish hook still runs its task to the end" do
+    task = Wallflower::Task.create!(kind: "export", person: person)
+
+    Wallflower::RunJob.perform_now(task)
+
+    assert_equal "finished", task.reload.status
   end
 end

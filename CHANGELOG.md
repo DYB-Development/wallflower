@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 
 ### Added
+- `config.on_finish` runs once with a task when it finishes, so a host can tell the person through its own notifications.
 - A runner links its task to a page in the host app with `task.link_result`, and a finished task's page offers an Open report button. `wallflower:update` adds the column to an app that installed earlier.
 
 ### Added

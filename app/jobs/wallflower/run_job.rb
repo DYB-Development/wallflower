@@ -6,6 +6,7 @@ module Wallflower
       task.update!(status: "running")
       Wallflower.kind(task.kind).runner.constantize.new.call(task)
       task.update!(status: "finished", finished_at: Time.current)
+      Wallflower.configuration.on_finish&.call(task)
     end
   end
 end

@@ -26,4 +26,11 @@ class ExportCsvTest < ActionDispatch::IntegrationTest
 
     assert_equal "month,total\n2026-10,42\n2026-11,7\n", response.body
   end
+
+  test "the example app tells the person their task finished, through the finish hook" do
+    Wallflower.start(kind: :export_csv, person: person, params: { "rows" => [ [ "2026-10", 42 ] ] })
+    perform_enqueued_jobs
+
+    assert_equal [ "Export to CSV finished" ], Notification.where(user: person).pluck(:message)
+  end
 end
