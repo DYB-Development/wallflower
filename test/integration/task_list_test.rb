@@ -48,4 +48,12 @@ class TaskListTest < ActionDispatch::IntegrationTest
 
     assert_select "[data-task-row] turbo-cable-stream-source", count: 2
   end
+
+  test "the list shows no task started by another person" do
+    Wallflower::Task.create!(kind: "export", person: User.create!(name: "Teammate"))
+
+    get "/background"
+
+    assert_select "[data-task-row]", count: 0
+  end
 end
