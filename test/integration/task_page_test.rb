@@ -152,4 +152,10 @@ class TaskPageTest < ActionDispatch::IntegrationTest
 
     assert_select "#status_task_#{task.id} .ks-badge-success", text: "Finished"
   end
+
+  test "a failed task shows its status in a danger badge" do
+    get "/background/tasks/#{task(status: "failed").id}"
+
+    assert_select "#status_task_#{task.id} .ks-badge-danger", text: "Failed"
+  end
 end
