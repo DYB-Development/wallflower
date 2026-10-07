@@ -102,4 +102,17 @@ class Wallflower::RunJobTest < ActiveSupport::TestCase
 
     assert_equal "Row 4 has no amount", task.reload.error_message
   end
+
+  test "a runner's error is reported to the host's error reporting" do
+    reported = []
+    subscriber = Object.new
+    subscriber.define_singleton_method(:report) { |error, **| reported << error.message }
+    Rails.error.subscribe(subscriber)
+
+    Wallflower::RunJob.perform_now(Wallflower::Task.create!(kind: "broken", person: person))
+
+    assert_equal [ "Row 4 has no amount" ], reported
+  ensure
+    Rails.error.unsubscribe(subscriber)
+  end
 end
