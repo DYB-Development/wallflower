@@ -93,4 +93,13 @@ class TaskPageTest < ActionDispatch::IntegrationTest
 
     assert_equal "month,total\n2026-10,42\n", response.body
   end
+
+  test "anyone else following a task's download link gets a not-found response" do
+    task(status: "finished").attach_result(io: StringIO.new("a,b\n"), filename: "transactions.csv")
+    ApplicationController.signed_in_user = User.create!(name: "Teammate")
+
+    get "/background/tasks/#{task.id}/download"
+
+    assert_response :not_found
+  end
 end
