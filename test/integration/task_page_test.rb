@@ -71,4 +71,10 @@ class TaskPageTest < ActionDispatch::IntegrationTest
 
     assert_select "#live_task_#{task.id}", text: /Running.*3 of 10/m
   end
+
+  test "a task whose total is not known yet shows no progress bar" do
+    get "/background/tasks/#{task.id}"
+
+    assert_select "#progress_task_#{task.id} *", count: 0
+  end
 end
