@@ -153,4 +153,12 @@ class Wallflower::RunJobTest < ActiveSupport::TestCase
 
     assert_equal 10_000, task.reload.done
   end
+
+  test "a task whose runner raises records when it ended" do
+    task = Wallflower::Task.create!(kind: "broken", person: person)
+
+    travel_to(Time.utc(2026, 10, 7, 12, 0, 0)) { Wallflower::RunJob.perform_now(task) }
+
+    assert_equal Time.utc(2026, 10, 7, 12, 0, 0), task.reload.finished_at
+  end
 end

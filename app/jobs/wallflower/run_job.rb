@@ -14,7 +14,7 @@ module Wallflower
       Wallflower.kind(task.kind).runner.constantize.new.call(task)
       task.update!(status: "finished", finished_at: Time.current)
     rescue StandardError => error
-      task.update!(status: "failed", error_message: error.message)
+      task.update!(status: "failed", error_message: error.message, finished_at: Time.current)
       Rails.error.report(error, handled: true, context: { wallflower_task_id: task.id })
     end
   end
