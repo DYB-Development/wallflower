@@ -14,7 +14,9 @@ class TaskPageTest < ActionDispatch::IntegrationTest
 
   def teardown
     ApplicationController.signed_in_user = nil
+    ApplicationController.signed_in_account = nil
     Wallflower.reset_kinds!
+    Wallflower.reset_configuration!
   end
 
   def task(**attributes)
@@ -42,6 +44,16 @@ class TaskPageTest < ActionDispatch::IntegrationTest
   test "someone other than the person who started a task gets a not-found response for its page" do
     started = task
     ApplicationController.signed_in_user = User.create!(name: "Teammate")
+
+    get "/background/tasks/#{started.id}"
+
+    assert_response :not_found
+  end
+
+  test "the person who started a task gets a not-found response for its page when viewing from another account" do
+    Wallflower.configure { |config| config.current_account_method = :current_account }
+    started = task(account: Account.create!(name: "Team"))
+    ApplicationController.signed_in_account = Account.create!(name: "Other team")
 
     get "/background/tasks/#{started.id}"
 
