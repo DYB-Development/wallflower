@@ -77,4 +77,12 @@ class TaskPageTest < ActionDispatch::IntegrationTest
 
     assert_select "#progress_task_#{task.id} *", count: 0
   end
+
+  test "a finished task's page offers a download of its file" do
+    task(status: "finished").attach_result(io: StringIO.new("a,b\n"), filename: "transactions.csv")
+
+    get "/background/tasks/#{task.id}"
+
+    assert_select "a[href=?]", "/background/tasks/#{task.id}/download", text: "Download"
+  end
 end
