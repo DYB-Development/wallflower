@@ -120,4 +120,10 @@ class TaskPageTest < ActionDispatch::IntegrationTest
 
     assert_equal [ [ "Row 2", "Amount is missing" ], [ "Row 3", "Date is not a date" ] ], css_select("#refusals_task_#{task.id} tbody tr").map { |row| row.css("td").map { |cell| cell.text.strip } }
   end
+
+  test "a finished task that refused no rows shows no list of refused rows" do
+    get "/background/tasks/#{task(status: "finished", total: 3, done: 3).id}"
+
+    assert_select "#refusals_task_#{task.id}", count: 0
+  end
 end
