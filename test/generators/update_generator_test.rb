@@ -22,6 +22,13 @@ class Wallflower::Generators::UpdateGeneratorTest < ActiveSupport::TestCase
     Rails::Generators.invoke("wallflower:update", [], destination_root: destination, quiet: true)
   end
 
+  test "copies the controller that catches a task page up when it is shown again" do
+    update
+
+    assert_equal File.read(File.expand_path("../../app/javascript/wallflower/catch_up_controller.js", __dir__)),
+                 File.read("#{destination}/app/javascript/controllers/wallflower/catch_up_controller.js")
+  end
+
   def migrations_named(name)
     Dir.glob("#{destination}/db/migrate/*_#{name}.rb")
   end
