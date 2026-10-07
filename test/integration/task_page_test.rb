@@ -146,4 +146,28 @@ class TaskPageTest < ActionDispatch::IntegrationTest
 
     assert_select "#progress_task_#{task.id}", text: /3 of 10/
   end
+
+  test "a finished task shows its status in a success badge" do
+    get "/background/tasks/#{task(status: "finished").id}"
+
+    assert_select "#status_task_#{task.id} .ks-badge-success", text: "Finished"
+  end
+
+  test "a failed task shows its status in a danger badge" do
+    get "/background/tasks/#{task(status: "failed").id}"
+
+    assert_select "#status_task_#{task.id} .ks-badge-danger", text: "Failed"
+  end
+
+  test "a running task shows its status in an info badge" do
+    get "/background/tasks/#{task(status: "running").id}"
+
+    assert_select "#status_task_#{task.id} .ks-badge-info", text: "Running"
+  end
+
+  test "a queued task shows its status in a neutral badge" do
+    get "/background/tasks/#{task.id}"
+
+    assert_select "#status_task_#{task.id} .ks-badge-neutral", text: "Queued"
+  end
 end
