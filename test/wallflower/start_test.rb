@@ -16,9 +16,7 @@ class Wallflower::StartTest < ActiveSupport::TestCase
   end
 
   test "starting a task enqueues the job that runs it" do
-    task = nil
-
-    assert_enqueued_with(job: Wallflower::RunJob) { task = Wallflower.start(kind: :export, person: person) }
+    assert_enqueued_with(job: Wallflower::RunJob) { Wallflower.start(kind: :export, person: person) }
   end
 
   test "starting a task keeps the kind, account and parameters it was given" do
