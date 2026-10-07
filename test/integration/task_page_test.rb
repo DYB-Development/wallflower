@@ -66,6 +66,12 @@ class TaskPageTest < ActionDispatch::IntegrationTest
     assert_select "turbo-cable-stream-source"
   end
 
+  test "an open task page catches up when it is shown again" do
+    get "/background/tasks/#{task.id}"
+
+    assert_select "[data-controller='wallflower--catch-up']"
+  end
+
   test "a task page opened in the Hotwire Native iOS app shows the same status and progress as in a browser" do
     get "/background/tasks/#{task(status: "running", total: 10, done: 3).id}", headers: { "User-Agent" => "Mozilla/5.0 (iPhone) Turbo Native iOS" }
 
