@@ -38,4 +38,13 @@ class TaskPageTest < ActionDispatch::IntegrationTest
 
     assert_select "#progress_task_#{task.id} [role=progressbar], #progress_task_#{task.id}", text: /3 of 10/
   end
+
+  test "someone other than the person who started a task gets a not-found response for its page" do
+    started = task
+    ApplicationController.signed_in_user = User.create!(name: "Teammate")
+
+    get "/background/tasks/#{started.id}"
+
+    assert_response :not_found
+  end
 end

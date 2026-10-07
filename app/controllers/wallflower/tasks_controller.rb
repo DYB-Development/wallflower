@@ -6,7 +6,8 @@ module Wallflower
     end
 
     def show
-      @task = Task.find(params[:id])
+      @task = Task.find_by(id: params[:id], person: current_person)
+      head :not_found unless @task
     end
   end
 end
