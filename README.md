@@ -16,6 +16,13 @@ bin/rails generate wallflower:install
 bin/rails db:migrate
 ```
 
+After updating the gem, run its update generator to copy any migrations added since it was installed, then migrate:
+
+```bash
+bin/rails generate wallflower:update
+bin/rails db:migrate
+```
+
 Mount the engine at the path its pages should live under:
 
 ```ruby
@@ -62,6 +69,14 @@ A runner that produces a file attaches it as the task's result:
 ```ruby
 task.attach_result(io: StringIO.new(csv), filename: "transactions.csv")
 ```
+
+A runner that works through rows can refuse one it cannot take, with a label for the row and a reason:
+
+```ruby
+task.refuse(label: "Row 4", reason: "Amount is missing")
+```
+
+Call `task.advance` for every row, refused or not. A finished task's page shows how many rows were changed (rows done less rows refused) and how many were refused, and lists each refused row with its reason.
 
 A finished task's page then offers a Download button. The file is sent through Wallflower's own route, which gives it only to the person who started the task and answers anyone else with not found.
 
