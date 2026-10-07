@@ -10,6 +10,7 @@ module Wallflower
     rescue StandardError => error
       task.update!(status: "failed", error_message: error.message)
       Rails.error.report(error, handled: true, context: { wallflower_task_id: task.id })
+      Wallflower.configuration.on_finish&.call(task)
     end
   end
 end

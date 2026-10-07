@@ -115,4 +115,13 @@ class Wallflower::RunJobTest < ActiveSupport::TestCase
   ensure
     Rails.error.unsubscribe(subscriber)
   end
+
+  test "the host's finish hook runs once with the task when it fails" do
+    called = []
+    Wallflower.configure { |config| config.on_finish = ->(task) { called << task.status } }
+
+    Wallflower::RunJob.perform_now(Wallflower::Task.create!(kind: "broken", person: person))
+
+    assert_equal [ "failed" ], called
+  end
 end
