@@ -1,3 +1,4 @@
+require "keystone_ui"
 require "wallflower/version"
 require "wallflower/configuration"
 require "wallflower/kinds"

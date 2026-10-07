@@ -5,5 +5,7 @@ module Wallflower
     before_action { send(Wallflower.configuration.authentication_method) }
 
     layout -> { Wallflower.configuration.layout }
+
+    helper KeystoneUiHelper
   end
 end

@@ -7,6 +7,10 @@ module Wallflower
     belongs_to :person, polymorphic: true
     belongs_to :account, polymorphic: true, optional: true
 
+    def kind_title
+      Wallflower.kind(kind).title
+    end
+
     def set_total(total)
       update!(total: total)
     end
