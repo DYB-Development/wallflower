@@ -26,6 +26,13 @@ class Wallflower::RunJobTest < ActiveSupport::TestCase
     end
   end
 
+  class ManyRowsRunner
+    def call(task)
+      task.set_total(10_000)
+      10_000.times { task.advance }
+    end
+  end
+
   def setup
     Wallflower.register_kind(:export, title: "Export transactions", runner: RecordingRunner.name)
     Wallflower.register_kind(:broken, title: "Broken export", runner: RaisingRunner.name)
@@ -136,5 +143,14 @@ class Wallflower::RunJobTest < ActiveSupport::TestCase
     end
 
     assert_equal "finished", task.reload.status
+  end
+
+  test "the final done count is saved when a task finishes however recently progress was last saved" do
+    Wallflower.register_kind(:many, title: "Many rows", runner: ManyRowsRunner.name)
+    task = Wallflower::Task.create!(kind: "many", person: person)
+
+    travel_to(Time.current) { Wallflower::RunJob.perform_now(task) }
+
+    assert_equal 10_000, task.reload.done
   end
 end

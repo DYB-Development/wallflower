@@ -44,8 +44,14 @@ module Wallflower
       update!(total: total)
     end
 
+    PROGRESS_SAVE_INTERVAL = 1.second
+
     def advance(by = 1)
-      increment(:done, by).save!
+      increment(:done, by)
+      return if @progress_saved_at && Time.current - @progress_saved_at < PROGRESS_SAVE_INTERVAL
+
+      save!
+      @progress_saved_at = Time.current
     end
   end
 end
