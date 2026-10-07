@@ -9,6 +9,7 @@ class MountedEngineTest < ActionDispatch::IntegrationTest
 
   def teardown
     ApplicationController.signed_in_user = nil
+    Wallflower.reset_configuration!
   end
 
   test "serves its pages under the path the host mounts it at" do
@@ -23,5 +24,16 @@ class MountedEngineTest < ActionDispatch::IntegrationTest
     get "/background"
 
     assert_response :unauthorized
+  end
+
+  test "checks sign-in with the method the host names" do
+    ApplicationController.define_method(:refuse_everyone) { head :forbidden }
+    Wallflower.configure { |config| config.authentication_method = :refuse_everyone }
+
+    get "/background"
+
+    assert_response :forbidden
+  ensure
+    ApplicationController.remove_method(:refuse_everyone)
   end
 end
