@@ -34,3 +34,33 @@ Wallflower.configure do |config|
   config.layout = "application"                      # the layout Wallflower's pages are drawn in
 end
 ```
+
+## Kinds and runners
+
+A kind is a type of task the app offers, such as an export. Register each one in an initializer with its key, its title and the name of its runner class:
+
+```ruby
+Wallflower.register_kind :export_transactions, title: "Export transactions", runner: "ExportTransactionsRunner"
+```
+
+An app whose registered runner class does not exist fails to boot, with a message naming the class.
+
+A runner is a plain class whose `call` receives the task. The task carries the `params`, `person` and `account` it was started with, and the runner reports progress on it while it works:
+
+```ruby
+class ExportTransactionsRunner
+  def call(task)
+    rows = Transaction.where(month: task.params["month"])
+    task.set_total(rows.count)
+    rows.find_each { |row| export(row); task.advance }
+  end
+end
+```
+
+## Starting a task
+
+```ruby
+task = Wallflower.start(kind: :export_transactions, person: current_user, account: current_account, params: { "month" => "2026-10" })
+```
+
+The task is returned queued and its job is enqueued. When the job runs, the task is marked running, its runner is called, and when the runner returns the task is marked finished with the time it finished.
