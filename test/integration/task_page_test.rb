@@ -59,4 +59,10 @@ class TaskPageTest < ActionDispatch::IntegrationTest
 
     assert_response :not_found
   end
+
+  test "an open task page listens for changes to its task" do
+    get "/background/tasks/#{task.id}"
+
+    assert_select "turbo-cable-stream-source"
+  end
 end
