@@ -50,4 +50,12 @@ class Wallflower::RunJobTest < ActiveSupport::TestCase
 
     assert_equal [ 10, 3 ], task.reload.values_at(:total, :done)
   end
+
+  test "a task whose runner returns is marked finished with the time it finished" do
+    task = Wallflower::Task.create!(kind: "export", person: person)
+
+    travel_to(Time.utc(2026, 10, 7, 12, 0, 0)) { Wallflower::RunJob.perform_now(task) }
+
+    assert_equal [ "finished", Time.utc(2026, 10, 7, 12, 0, 0) ], task.reload.values_at(:status, :finished_at)
+  end
 end
