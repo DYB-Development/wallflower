@@ -26,6 +26,10 @@ module Wallflower
       done - refusals.size
     end
 
+    def link_result(url)
+      update!(result_url: url)
+    end
+
     def refuse(label:, reason:)
       refusals.create!(label: label, reason: reason)
     end
