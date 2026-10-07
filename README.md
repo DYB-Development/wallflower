@@ -96,6 +96,18 @@ task = Wallflower.start(kind: :export_transactions, person: current_user, accoun
 
 The task is returned queued and its job is enqueued. When the job runs, the task is marked running, its runner is called, and when the runner returns the task is marked finished with the time it finished.
 
+## When a task finishes
+
+Set `on_finish` to run code once with the task when it finishes, such as sending the person a notification through the app's own notification system:
+
+```ruby
+Wallflower.configure do |config|
+  config.on_finish = ->(task) { TaskFinishedNotifier.with(task: task).deliver(task.person) }
+end
+```
+
+With no `on_finish` set, tasks still run to the end.
+
 ## The task list
 
 The engine's root lists the tasks the signed-in person started in the current account, newest first. Each row shows the kind's title, the status, the progress and when it was started, links to the task's page, and updates while the task runs.
