@@ -113,4 +113,13 @@ class Wallflower::SweepJobTest < ActiveSupport::TestCase
 
     assert_equal 0, ActiveStorage::Blob.count
   end
+
+  test "leaves queued and running tasks in place however old they are" do
+    Wallflower.configure { |config| config.keep_for = 30.days }
+    queued = Wallflower::Task.create!(kind: "export", person: User.create!(name: "Rep"), created_at: 1.year.ago)
+
+    Wallflower::SweepJob.perform_now
+
+    assert Wallflower::Task.exists?(queued.id)
+  end
 end
