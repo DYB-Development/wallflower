@@ -11,3 +11,4 @@ All notable changes to this project will be documented in this file.
 - `Wallflower.register_kind` registers a kind of task by its key, title and runner class name, and an app whose runner class does not exist fails to boot.
 - `Wallflower.start` returns a queued task and enqueues the job that marks it running, calls its runner, and marks it finished with the time it finished.
 - A runner reports progress with `task.set_total` and `task.advance`.
+- A task page shows the person who started it the kind's title, the task's status and a progress bar of done against total, updated live over Turbo Streams, and answers anyone else with not found.
