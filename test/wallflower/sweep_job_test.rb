@@ -66,4 +66,13 @@ class Wallflower::SweepJobTest < ActiveSupport::TestCase
 
     assert_not Wallflower::Task.exists?(task.id)
   end
+
+  test "with a keep period set, deletes a task that failed longer ago than the period" do
+    Wallflower.configure { |config| config.keep_for = 30.days }
+    task = ended("failed", at: 31.days.ago)
+
+    Wallflower::SweepJob.perform_now
+
+    assert_not Wallflower::Task.exists?(task.id)
+  end
 end
