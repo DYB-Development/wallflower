@@ -124,4 +124,17 @@ class Wallflower::RunJobTest < ActiveSupport::TestCase
 
     assert_equal [ "failed" ], called
   end
+
+  test "a finish hook that raises leaves its finished task finished" do
+    Wallflower.configure { |config| config.on_finish = ->(_task) { raise "Mail server is down" } }
+    task = Wallflower::Task.create!(kind: "export", person: person)
+
+    begin
+      Wallflower::RunJob.perform_now(task)
+    rescue RuntimeError
+      nil
+    end
+
+    assert_equal "finished", task.reload.status
+  end
 end
