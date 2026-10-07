@@ -26,4 +26,12 @@ class Wallflower::SweepJobTest < ActiveSupport::TestCase
 
     assert_equal "Stalled: no progress for 1 hour", task.reload.error_message
   end
+
+  test "leaves a running task that was updated within the limit running" do
+    task = running_since(10.minutes.ago)
+
+    Wallflower::SweepJob.perform_now
+
+    assert_equal "running", task.reload.status
+  end
 end
