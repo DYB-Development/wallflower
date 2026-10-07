@@ -7,8 +7,8 @@ module Wallflower
       Wallflower.kind(task.kind).runner.constantize.new.call(task)
       task.update!(status: "finished", finished_at: Time.current)
       Wallflower.configuration.on_finish&.call(task)
-    rescue StandardError
-      task.update!(status: "failed")
+    rescue StandardError => error
+      task.update!(status: "failed", error_message: error.message)
     end
   end
 end

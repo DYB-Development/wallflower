@@ -94,4 +94,12 @@ class Wallflower::RunJobTest < ActiveSupport::TestCase
 
     assert_equal "failed", task.reload.status
   end
+
+  test "a failed task keeps the error message its runner raised" do
+    task = Wallflower::Task.create!(kind: "broken", person: person)
+
+    Wallflower::RunJob.perform_now(task)
+
+    assert_equal "Row 4 has no amount", task.reload.error_message
+  end
 end
