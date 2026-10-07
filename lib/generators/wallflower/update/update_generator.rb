@@ -19,6 +19,10 @@ module Wallflower
       def copy_result_url_migration
         migration_template "add_result_url_to_wallflower_tasks.rb.erb", "db/migrate/add_result_url_to_wallflower_tasks.rb"
       end
+
+      def copy_error_message_migration
+        migration_template "add_error_message_to_wallflower_tasks.rb.erb", "db/migrate/add_error_message_to_wallflower_tasks.rb"
+      end
     end
   end
 end

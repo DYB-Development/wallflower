@@ -38,6 +38,10 @@ class Wallflower::Generators::InstallGeneratorTest < ActiveSupport::TestCase
     assert_includes File.read(Dir.glob("#{destination}/db/migrate/*_add_result_url_to_wallflower_tasks.rb").first.to_s), "add_column :wallflower_tasks, :result_url, :string"
   end
 
+  test "copies a migration that gives each task an error message" do
+    assert_includes File.read(Dir.glob("#{destination}/db/migrate/*_add_error_message_to_wallflower_tasks.rb").first.to_s), "add_column :wallflower_tasks, :error_message, :text"
+  end
+
   private
 
   def migration

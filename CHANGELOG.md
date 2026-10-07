@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 
 ### Added
+- A task whose runner raises is marked failed with the error's message, which its page shows beside how far it got, and the error is reported through `Rails.error`.
+- `Wallflower::SweepJob` marks a task failed when it has run without an update past `stall_after`, one hour by default.
+- `on_finish` also runs once when a task fails or stalls, and a hook that raises no longer turns a finished task into a failed one.
+- `wallflower:update` adds the error message column to an app that installed earlier.
+
+### Added
 - `config.on_finish` runs once with a task when it finishes, so a host can tell the person through its own notifications.
 - A runner links its task to a page in the host app with `task.link_result`, and a finished task's page offers an Open report button. `wallflower:update` adds the column to an app that installed earlier.
 

@@ -2,12 +2,13 @@
 
 module Wallflower
   class Configuration
-    attr_accessor :authentication_method, :layout, :current_person_method, :current_account_method, :on_finish
+    attr_accessor :authentication_method, :layout, :current_person_method, :current_account_method, :on_finish, :stall_after
 
     def initialize
       @authentication_method = :authenticate_user!
       @layout = "application"
       @current_person_method = :current_user
+      @stall_after = 1.hour
     end
   end
 

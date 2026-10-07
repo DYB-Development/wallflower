@@ -14,4 +14,8 @@ class Wallflower::ConfigurationTest < ActiveSupport::TestCase
   test "finds no account unless the host names a method for it" do
     assert_nil Wallflower.configuration.current_account_method
   end
+
+  test "treats a running task as stalled after an hour unless the host sets another limit" do
+    assert_equal 1.hour, Wallflower.configuration.stall_after
+  end
 end

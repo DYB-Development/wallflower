@@ -18,8 +18,17 @@ class Wallflower::RunJobTest < ActiveSupport::TestCase
     end
   end
 
+  class RaisingRunner
+    def call(task)
+      task.set_total(10)
+      3.times { task.advance }
+      raise ArgumentError, "Row 4 has no amount"
+    end
+  end
+
   def setup
     Wallflower.register_kind(:export, title: "Export transactions", runner: RecordingRunner.name)
+    Wallflower.register_kind(:broken, title: "Broken export", runner: RaisingRunner.name)
   end
 
   def teardown
@@ -74,6 +83,57 @@ class Wallflower::RunJobTest < ActiveSupport::TestCase
     task = Wallflower::Task.create!(kind: "export", person: person)
 
     Wallflower::RunJob.perform_now(task)
+
+    assert_equal "finished", task.reload.status
+  end
+
+  test "a task whose runner raises is marked failed" do
+    task = Wallflower::Task.create!(kind: "broken", person: person)
+
+    Wallflower::RunJob.perform_now(task)
+
+    assert_equal "failed", task.reload.status
+  end
+
+  test "a failed task keeps the error message its runner raised" do
+    task = Wallflower::Task.create!(kind: "broken", person: person)
+
+    Wallflower::RunJob.perform_now(task)
+
+    assert_equal "Row 4 has no amount", task.reload.error_message
+  end
+
+  test "a runner's error is reported to the host's error reporting" do
+    reported = []
+    subscriber = Object.new
+    subscriber.define_singleton_method(:report) { |error, **| reported << error.message }
+    Rails.error.subscribe(subscriber)
+
+    Wallflower::RunJob.perform_now(Wallflower::Task.create!(kind: "broken", person: person))
+
+    assert_equal [ "Row 4 has no amount" ], reported
+  ensure
+    Rails.error.unsubscribe(subscriber)
+  end
+
+  test "the host's finish hook runs once with the task when it fails" do
+    called = []
+    Wallflower.configure { |config| config.on_finish = ->(task) { called << task.status } }
+
+    Wallflower::RunJob.perform_now(Wallflower::Task.create!(kind: "broken", person: person))
+
+    assert_equal [ "failed" ], called
+  end
+
+  test "a finish hook that raises leaves its finished task finished" do
+    Wallflower.configure { |config| config.on_finish = ->(_task) { raise "Mail server is down" } }
+    task = Wallflower::Task.create!(kind: "export", person: person)
+
+    begin
+      Wallflower::RunJob.perform_now(task)
+    rescue RuntimeError
+      nil
+    end
 
     assert_equal "finished", task.reload.status
   end

@@ -134,4 +134,16 @@ class TaskPageTest < ActionDispatch::IntegrationTest
 
     assert_select "a[href=?]", "/console/reports/42", text: "Open report"
   end
+
+  test "a failed task's page shows the error message" do
+    get "/background/tasks/#{task(status: "failed", error_message: "Row 4 has no amount").id}"
+
+    assert_select "#error_task_#{task.id}", text: "Row 4 has no amount"
+  end
+
+  test "a failed task's page shows how far it got before it failed" do
+    get "/background/tasks/#{task(status: "failed", error_message: "Row 4 has no amount", total: 10, done: 3).id}"
+
+    assert_select "#progress_task_#{task.id}", text: /3 of 10/
+  end
 end
