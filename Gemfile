@@ -8,6 +8,7 @@ gem "minitest", "~> 5.0"  # pin to 5.x; minitest 6 removed minitest/mock
 gem "sqlite3"
 gem "csv" # the example app's CSV runner; no longer bundled with Ruby from 3.4
 gem "rubocop-rails-omakase", require: false
+gem "the_local", "~> 0.4", ">= 0.4.2"
 
 # json 3.0.2 broke ActiveSupport JSON decoding
 gem "json", "~> 2.21", ">= 2.21.2"
