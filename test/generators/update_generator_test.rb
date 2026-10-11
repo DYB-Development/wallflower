@@ -57,4 +57,10 @@ class Wallflower::Generators::UpdateGeneratorTest < ActiveSupport::TestCase
 
     assert_equal 1, migrations_named("add_error_message_to_wallflower_tasks").size
   end
+
+  test "adds the started time to an app that installed earlier" do
+    update
+
+    assert_equal 1, migrations_named("add_started_at_to_wallflower_tasks").size
+  end
 end

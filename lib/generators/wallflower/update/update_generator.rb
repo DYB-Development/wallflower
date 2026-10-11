@@ -24,6 +24,10 @@ module Wallflower
         migration_template "add_error_message_to_wallflower_tasks.rb.erb", "db/migrate/add_error_message_to_wallflower_tasks.rb"
       end
 
+      def copy_started_at_migration
+        migration_template "add_started_at_to_wallflower_tasks.rb.erb", "db/migrate/add_started_at_to_wallflower_tasks.rb"
+      end
+
       def copy_catch_up_controller
         source = File.expand_path("../../../../app/javascript/wallflower/catch_up_controller.js", __dir__)
         create_file "app/javascript/controllers/wallflower/catch_up_controller.js", File.read(source)
