@@ -20,4 +20,8 @@ class Wallflower::TimeLeftTest < ActiveSupport::TestCase
   test "a task under five percent of the way through has no seconds left yet" do
     assert_nil task(total: 100, done: 4, started_at: 1.minute.ago).seconds_left
   end
+
+  test "a finished task has no seconds left" do
+    assert_nil task(status: "finished", total: 100, done: 25, started_at: 1.minute.ago).seconds_left
+  end
 end
