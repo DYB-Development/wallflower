@@ -1,0 +1,15 @@
+# frozen_string_literal: true
+
+require "test_helper"
+
+class Wallflower::TimeLeftTest < ActiveSupport::TestCase
+  def task(**attributes)
+    Wallflower::Task.create!(kind: "import", person: User.create!(name: "Rep"), status: "running", **attributes)
+  end
+
+  test "a running task works out the seconds left from how fast it has gone so far" do
+    travel_to(Time.utc(2026, 10, 7, 12, 1, 0)) do
+      assert_equal 180, task(total: 100, done: 25, started_at: Time.utc(2026, 10, 7, 12, 0, 0)).seconds_left
+    end
+  end
+end

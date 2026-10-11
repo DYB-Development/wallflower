@@ -44,6 +44,11 @@ module Wallflower
       update!(total: total)
     end
 
+    def seconds_left
+      seconds_per_row = (Time.current - started_at) / done
+      ((total - done) * seconds_per_row).round
+    end
+
     PROGRESS_SAVE_INTERVAL = 1.second
 
     def advance(by = 1)
