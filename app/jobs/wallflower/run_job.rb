@@ -10,7 +10,7 @@ module Wallflower
     private
 
     def run(task)
-      task.update!(status: "running")
+      task.update!(status: "running", started_at: Time.current)
       Wallflower.kind(task.kind).runner.constantize.new.call(task)
       task.update!(status: "finished", finished_at: Time.current)
     rescue StandardError => error

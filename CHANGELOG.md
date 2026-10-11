@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+
+### Added
+- A running task's page and its row in the task list show an estimate of the time left, worked out from how fast the task has gone so far and updated as it progresses. It appears once the task has a total and is at least five percent done. Run `wallflower:update` and migrate to add the time each task started running, which the estimate needs.
+
 ## [0.2.0] - 2026-10-07
 
 ### Added

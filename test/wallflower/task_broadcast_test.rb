@@ -29,4 +29,12 @@ class Wallflower::TaskBroadcastTest < ActiveSupport::TestCase
 
     assert_equal "live_task_#{task.id}", broadcasts.last["target"]
   end
+
+  test "a change to a running task sends its open page the new time left" do
+    task = Wallflower::Task.create!(kind: "export", person: User.create!(name: "Rep"), status: "running", total: 100, done: 24, started_at: 1.minute.ago)
+
+    broadcasts = travel_to(task.started_at + 1.minute) { capture_turbo_stream_broadcasts(task) { task.advance } }
+
+    assert_includes broadcasts.last.to_html, "3 minutes left"
+  end
 end

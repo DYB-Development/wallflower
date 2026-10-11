@@ -176,4 +176,12 @@ class TaskPageTest < ActionDispatch::IntegrationTest
 
     assert_select "#status_task_#{task.id} .ks-badge-neutral", text: "Queued"
   end
+
+  test "the person who started a running task sees an estimate of the time left on its page" do
+    travel_to(Time.utc(2026, 10, 7, 12, 1, 0)) do
+      get "/background/tasks/#{task(status: "running", total: 100, done: 25, started_at: Time.utc(2026, 10, 7, 12, 0, 0)).id}"
+    end
+
+    assert_select "#time_left_task_#{task.id}", text: "3 minutes left"
+  end
 end

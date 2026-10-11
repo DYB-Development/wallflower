@@ -8,4 +8,7 @@
       <%= render Keystone::Ui::ProgressComponent.new(value: task.done, max: task.total, label: "#{task.done} of #{task.total}") %>
     <% end %>
   </div>
+  <% if task.seconds_left %>
+    <p id="<%= dom_id(task, :time_left) %>"><%= "#{distance_of_time_in_words(task.seconds_left)} left" %></p>
+  <% end %>
 </div>

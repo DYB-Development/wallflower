@@ -161,4 +161,12 @@ class Wallflower::RunJobTest < ActiveSupport::TestCase
 
     assert_equal Time.utc(2026, 10, 7, 12, 0, 0), task.reload.finished_at
   end
+
+  test "a task records the time it started running" do
+    task = Wallflower::Task.create!(kind: "export", person: person)
+
+    travel_to(Time.utc(2026, 10, 7, 12, 0, 0)) { Wallflower::RunJob.perform_now(task) }
+
+    assert_equal Time.utc(2026, 10, 7, 12, 0, 0), task.reload.started_at
+  end
 end

@@ -132,11 +132,11 @@ With `keep_for` set, the same sweep deletes each finished or failed task that en
 
 ## The task list
 
-The engine's root lists the tasks the signed-in person started in the current account, newest first. Each row shows the kind's title, the status as a coloured badge, the progress and when it was started, links to the task's page, and updates while the task runs.
+The engine's root lists the tasks the signed-in person started in the current account, newest first. Each row shows the kind's title, the status as a coloured badge, the progress, the time left while it runs and when it was started, links to the task's page, and updates while the task runs.
 
 ## The task page
 
-A task's page lives at `tasks/:id` under the engine's mount path. The person who started the task sees its kind's title, its status and, once the runner has set a total, a progress bar of done against total. The page listens for changes to its task over Turbo Streams, so its status and progress update without a reload, in a browser and in the Hotwire Native iOS app alike. Anyone else, and the same person viewing from another account, gets a not-found response.
+A task's page lives at `tasks/:id` under the engine's mount path. The person who started the task sees its kind's title, its status and, once the runner has set a total, a progress bar of done against total. While the task runs and is at least five percent done, an estimate of the time left sits under the bar, worked out from how fast the task has gone since it started running. The page listens for changes to its task over Turbo Streams, so its status, progress and time left update without a reload, in a browser and in the Hotwire Native iOS app alike. Anyone else, and the same person viewing from another account, gets a not-found response.
 
 The task page and the task list reload in place when they are shown again after being hidden, such as when the iOS app returns from the background, so they show changes broadcast while they could not receive them. A page that stays visible makes no extra request. The copied controller is registered by the host's own Stimulus setup, as `wallflower--catch-up`.
 

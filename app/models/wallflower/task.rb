@@ -44,6 +44,15 @@ module Wallflower
       update!(total: total)
     end
 
+    ESTIMATE_AFTER_SHARE = 0.05
+
+    def seconds_left
+      return unless estimable?
+
+      seconds_per_row = (Time.current - started_at) / done
+      ((total - done) * seconds_per_row).round
+    end
+
     PROGRESS_SAVE_INTERVAL = 1.second
 
     def advance(by = 1)
@@ -52,6 +61,12 @@ module Wallflower
 
       save!
       @progress_saved_at = Time.current
+    end
+
+    private
+
+    def estimable?
+      status == "running" && started_at && total && done.positive? && done >= total * ESTIMATE_AFTER_SHARE
     end
   end
 end
