@@ -82,4 +82,12 @@ class TaskListTest < ActionDispatch::IntegrationTest
 
     assert_equal on_page, css_select("#live_task_#{task.id}").to_html
   end
+
+  test "a running task's row shows its time left beside its progress bar" do
+    task = started(at: 1.day.ago, status: "running", total: 100, done: 25, started_at: Time.utc(2026, 10, 7, 12, 0, 0))
+
+    travel_to(Time.utc(2026, 10, 7, 12, 1, 0)) { get "/background" }
+
+    assert_select "[data-task-row] #time_left_task_#{task.id}", text: "3 minutes left"
+  end
 end
