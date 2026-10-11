@@ -45,6 +45,8 @@ module Wallflower
     end
 
     def seconds_left
+      return unless total
+
       seconds_per_row = (Time.current - started_at) / done
       ((total - done) * seconds_per_row).round
     end

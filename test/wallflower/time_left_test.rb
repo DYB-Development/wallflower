@@ -12,4 +12,8 @@ class Wallflower::TimeLeftTest < ActiveSupport::TestCase
       assert_equal 180, task(total: 100, done: 25, started_at: Time.utc(2026, 10, 7, 12, 0, 0)).seconds_left
     end
   end
+
+  test "a task with no total has no seconds left" do
+    assert_nil task(done: 25, started_at: 1.minute.ago).seconds_left
+  end
 end
