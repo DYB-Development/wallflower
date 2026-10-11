@@ -44,8 +44,10 @@ module Wallflower
       update!(total: total)
     end
 
+    ESTIMATE_AFTER_SHARE = 0.05
+
     def seconds_left
-      return unless total
+      return unless total && done >= total * ESTIMATE_AFTER_SHARE
 
       seconds_per_row = (Time.current - started_at) / done
       ((total - done) * seconds_per_row).round
