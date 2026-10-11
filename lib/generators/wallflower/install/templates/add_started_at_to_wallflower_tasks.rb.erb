@@ -1,0 +1,5 @@
+class AddStartedAtToWallflowerTasks < ActiveRecord::Migration[<%= ActiveRecord::Migration.current_version %>]
+  def change
+    add_column :wallflower_tasks, :started_at, :datetime
+  end
+end
