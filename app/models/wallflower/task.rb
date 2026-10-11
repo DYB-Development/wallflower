@@ -47,7 +47,7 @@ module Wallflower
     ESTIMATE_AFTER_SHARE = 0.05
 
     def seconds_left
-      return unless status == "running" && total && done >= total * ESTIMATE_AFTER_SHARE
+      return unless status == "running" && total && done.positive? && done >= total * ESTIMATE_AFTER_SHARE
 
       seconds_per_row = (Time.current - started_at) / done
       ((total - done) * seconds_per_row).round

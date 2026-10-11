@@ -28,4 +28,8 @@ class Wallflower::TimeLeftTest < ActiveSupport::TestCase
   test "a failed task has no seconds left" do
     assert_nil task(status: "failed", total: 100, done: 25, started_at: 1.minute.ago).seconds_left
   end
+
+  test "a task with a total of zero has no seconds left" do
+    assert_nil task(total: 0, started_at: 1.minute.ago).seconds_left
+  end
 end
