@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.3.1] - 2026-10-21
+
+### Fixed
+- Task pages render inside a host layout that links to the host app's own pages with its route helpers, such as `quizzes_path`, instead of raising an undefined-method error. Wallflower's own links still point at its pages when the host has a route of the same name.
+
 ## [0.3.0] - 2026-10-11
 
 ### Added
