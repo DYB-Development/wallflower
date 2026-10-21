@@ -41,6 +41,14 @@ class TaskPageTest < ActionDispatch::IntegrationTest
     assert_select "#progress_task_#{task.id}", text: /3 of 10/
   end
 
+  test "a task's page renders inside a host layout that links with the host app's own route helpers" do
+    Wallflower.configure { |config| config.layout = "linked" }
+
+    get "/background/tasks/#{task.id}"
+
+    assert_select "nav a[href=?]", "/home"
+  end
+
   test "someone other than the person who started a task gets a not-found response for its page" do
     started = task
     ApplicationController.signed_in_user = User.create!(name: "Teammate")
