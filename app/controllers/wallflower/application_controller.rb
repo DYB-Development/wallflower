@@ -7,6 +7,9 @@ module Wallflower
     layout -> { Wallflower.configuration.layout }
 
     helper KeystoneUiHelper
+    helper AppRoutesHelper
+
+    before_action { AppRoutesHelper.define_app_route_helpers }
 
     private
 
