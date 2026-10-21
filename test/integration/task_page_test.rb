@@ -49,6 +49,14 @@ class TaskPageTest < ActionDispatch::IntegrationTest
     assert_select "nav a[href=?]", "/home"
   end
 
+  test "a task's download link points at wallflower's page when the host app has a route of the same name" do
+    task(status: "finished").attach_result(io: StringIO.new("a,b\n"), filename: "transactions.csv")
+
+    get "/background/tasks/#{task.id}"
+
+    assert_select "a[href=?]", "/background/tasks/#{task.id}/download", text: "Download"
+  end
+
   test "someone other than the person who started a task gets a not-found response for its page" do
     started = task
     ApplicationController.signed_in_user = User.create!(name: "Teammate")
