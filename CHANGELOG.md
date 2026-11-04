@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.4.0] - 2026-11-04
+
+### Added
+- The gem ships Claude Code expert agents through the_local. A host app that uses the_local gets `wallflower-info`, `wallflower-install` and `wallflower-develop` when it installs its dependencies' agents.
+
 ## [0.3.1] - 2026-10-21
 
 ### Fixed
