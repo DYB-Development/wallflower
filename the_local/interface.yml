@@ -1,0 +1,34 @@
+scope: background tasks — starting long-running work, following its status and progress, and getting its result
+
+install:
+  - bin/rails generate wallflower:install
+  - bin/rails generate wallflower:update
+  - mount Wallflower::Engine
+  - Wallflower.configure
+  - Wallflower::SweepJob
+
+develop:
+  - Wallflower.register_kind
+  - Wallflower.start
+  - set_total
+  - advance
+  - attach_result
+  - link_result
+  - refuse
+
+sources:
+  - lib/wallflower.rb
+  - lib/wallflower/configuration.rb
+  - lib/wallflower/kinds.rb
+  - lib/wallflower/engine.rb
+  - app/models/wallflower/task.rb
+  - app/models/wallflower/refusal.rb
+  - app/jobs/wallflower/run_job.rb
+  - app/jobs/wallflower/sweep_job.rb
+  - app/controllers/wallflower/application_controller.rb
+  - app/controllers/wallflower/tasks_controller.rb
+  - app/views/wallflower/tasks/index.html.erb
+  - app/views/wallflower/tasks/show.html.erb
+  - config/routes.rb
+  - lib/generators/wallflower/install/install_generator.rb
+  - lib/generators/wallflower/update/update_generator.rb
