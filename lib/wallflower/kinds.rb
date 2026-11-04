@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
 module Wallflower
-  Kind = Struct.new(:key, :title, :runner, keyword_init: true)
+  Kind = Struct.new(:key, :title, :runner, :tries, keyword_init: true)
 
   class MissingRunner < StandardError; end
 
-  def self.register_kind(key, title:, runner:)
-    kinds[key.to_sym] = Kind.new(key: key.to_sym, title: title, runner: runner.to_s)
+  def self.register_kind(key, title:, runner:, tries: 1)
+    kinds[key.to_sym] = Kind.new(key: key.to_sym, title: title, runner: runner.to_s, tries: tries)
   end
 
   def self.kind(key)

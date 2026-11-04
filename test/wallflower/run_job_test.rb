@@ -3,6 +3,8 @@
 require "test_helper"
 
 class Wallflower::RunJobTest < ActiveSupport::TestCase
+  include ActiveJob::TestHelper
+
   class RecordingRunner
     cattr_accessor :seen
 
@@ -23,6 +25,15 @@ class Wallflower::RunJobTest < ActiveSupport::TestCase
       task.set_total(10)
       3.times { task.advance }
       raise ArgumentError, "Row 4 has no amount"
+    end
+  end
+
+  class FailingTwiceRunner
+    cattr_accessor :tries, default: 0
+
+    def call(_task)
+      self.class.tries += 1
+      raise "Try #{self.class.tries} failed" if self.class.tries < 3
     end
   end
 
@@ -168,5 +179,15 @@ class Wallflower::RunJobTest < ActiveSupport::TestCase
     travel_to(Time.utc(2026, 10, 7, 12, 0, 0)) { Wallflower::RunJob.perform_now(task) }
 
     assert_equal Time.utc(2026, 10, 7, 12, 0, 0), task.reload.started_at
+  end
+
+  test "a kind with three tries finishes when a later try works" do
+    FailingTwiceRunner.tries = 0
+    Wallflower.register_kind(:flaky, title: "Flaky", runner: FailingTwiceRunner.name, tries: 3)
+    task = Wallflower::Task.create!(kind: "flaky", person: person)
+
+    perform_enqueued_jobs { Wallflower::RunJob.perform_later(task) }
+
+    assert_equal [ "finished", 3 ], [ task.reload.status, FailingTwiceRunner.tries ]
   end
 end
