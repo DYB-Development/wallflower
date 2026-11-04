@@ -20,8 +20,8 @@ module Wallflower
       STATUS_VARIANTS.fetch(status, :neutral)
     end
 
-    def kind_title
-      Wallflower.kind(kind).title
+    def task_type_title
+      Wallflower.task_type(task_type).title
     end
 
     def attach_result(io:, filename:)

@@ -8,7 +8,7 @@ install:
   - Wallflower::SweepJob
 
 develop:
-  - Wallflower.register_kind
+  - Wallflower.register_task_type
   - Wallflower.start
   - set_total
   - advance
@@ -19,7 +19,7 @@ develop:
 sources:
   - lib/wallflower.rb
   - lib/wallflower/configuration.rb
-  - lib/wallflower/kinds.rb
+  - lib/wallflower/task_types.rb
   - lib/wallflower/engine.rb
   - app/models/wallflower/task.rb
   - app/models/wallflower/refusal.rb

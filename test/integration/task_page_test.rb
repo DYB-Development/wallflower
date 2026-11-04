@@ -8,22 +8,22 @@ class TaskPageTest < ActionDispatch::IntegrationTest
   end
 
   def setup
-    Wallflower.register_kind(:export, title: "Export transactions", runner: "Object")
+    Wallflower.register_task_type(:export, title: "Export transactions", runner: "Object")
     ApplicationController.signed_in_user = person
   end
 
   def teardown
     ApplicationController.signed_in_user = nil
     ApplicationController.signed_in_account = nil
-    Wallflower.reset_kinds!
+    Wallflower.reset_task_types!
     Wallflower.reset_configuration!
   end
 
   def task(**attributes)
-    @task ||= Wallflower::Task.create!(kind: "export", person: person, **attributes)
+    @task ||= Wallflower::Task.create!(task_type: "export", person: person, **attributes)
   end
 
-  test "the person who started a task sees its kind's title on its page" do
+  test "the person who started a task sees its task type's title on its page" do
     get "/background/tasks/#{task.id}"
 
     assert_select "h1", text: "Export transactions"

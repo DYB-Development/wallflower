@@ -8,19 +8,19 @@ class TaskListTest < ActionDispatch::IntegrationTest
   end
 
   def setup
-    Wallflower.register_kind(:export, title: "Export transactions", runner: "Object")
+    Wallflower.register_task_type(:export, title: "Export transactions", runner: "Object")
     ApplicationController.signed_in_user = person
   end
 
   def teardown
     ApplicationController.signed_in_user = nil
     ApplicationController.signed_in_account = nil
-    Wallflower.reset_kinds!
+    Wallflower.reset_task_types!
     Wallflower.reset_configuration!
   end
 
   def started(at:, **attributes)
-    Wallflower::Task.create!(kind: "export", person: person, created_at: at, **attributes)
+    Wallflower::Task.create!(task_type: "export", person: person, created_at: at, **attributes)
   end
 
   test "a person sees the tasks they started, newest first, each linking to its page" do
@@ -32,7 +32,7 @@ class TaskListTest < ActionDispatch::IntegrationTest
     assert_equal [ "/background/tasks/#{newer.id}", "/background/tasks/#{older.id}" ], css_select("[data-task-row] a").map { |link| link["href"] }
   end
 
-  test "each row shows the kind's title, the status, the progress and when it was started" do
+  test "each row shows the task type's title, the status, the progress and when it was started" do
     started(at: Time.utc(2026, 10, 7, 9, 30), status: "running", total: 10, done: 3)
 
     get "/background"
@@ -56,7 +56,7 @@ class TaskListTest < ActionDispatch::IntegrationTest
   end
 
   test "the list shows no task started by another person" do
-    Wallflower::Task.create!(kind: "export", person: User.create!(name: "Teammate"))
+    Wallflower::Task.create!(task_type: "export", person: User.create!(name: "Teammate"))
 
     get "/background"
 

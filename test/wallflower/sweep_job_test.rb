@@ -10,11 +10,11 @@ class Wallflower::SweepJobTest < ActiveSupport::TestCase
   end
 
   def ended(status, at:)
-    Wallflower::Task.create!(kind: "export", person: User.create!(name: "Rep"), status: status, finished_at: at)
+    Wallflower::Task.create!(task_type: "export", person: User.create!(name: "Rep"), status: status, finished_at: at)
   end
 
   def running_since(time)
-    Wallflower::Task.create!(kind: "export", person: User.create!(name: "Rep"), status: "running", updated_at: time)
+    Wallflower::Task.create!(task_type: "export", person: User.create!(name: "Rep"), status: "running", updated_at: time)
   end
 
   test "marks a task failed when it has been running without an update past the limit" do
@@ -116,7 +116,7 @@ class Wallflower::SweepJobTest < ActiveSupport::TestCase
 
   test "leaves queued and running tasks in place however old they are" do
     Wallflower.configure { |config| config.keep_for = 30.days }
-    queued = Wallflower::Task.create!(kind: "export", person: User.create!(name: "Rep"), created_at: 1.year.ago)
+    queued = Wallflower::Task.create!(task_type: "export", person: User.create!(name: "Rep"), created_at: 1.year.ago)
 
     Wallflower::SweepJob.perform_now
 

@@ -1,0 +1,5 @@
+class RenameWallflowerTasksKindToTaskType < ActiveRecord::Migration[<%= ActiveRecord::Migration.current_version %>]
+  def change
+    rename_column :wallflower_tasks, :kind, :task_type if column_exists?(:wallflower_tasks, :kind)
+  end
+end

@@ -34,6 +34,6 @@ Rails.application.config.action_dispatch.show_exceptions = :none
 class ActiveSupport::TestCase
   setup do
     Wallflower.reset_configuration!
-    Wallflower.reset_kinds!
+    Wallflower.reset_task_types!
   end
 end

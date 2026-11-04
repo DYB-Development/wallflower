@@ -4,7 +4,7 @@ require "test_helper"
 
 class Wallflower::TimeLeftTest < ActiveSupport::TestCase
   def task(**attributes)
-    Wallflower::Task.create!(kind: "import", person: User.create!(name: "Rep"), status: "running", **attributes)
+    Wallflower::Task.create!(task_type: "import", person: User.create!(name: "Rep"), status: "running", **attributes)
   end
 
   test "a running task works out the seconds left from how fast it has gone so far" do

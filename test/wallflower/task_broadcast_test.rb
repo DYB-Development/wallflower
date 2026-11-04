@@ -7,15 +7,15 @@ class Wallflower::TaskBroadcastTest < ActiveSupport::TestCase
   include Turbo::Broadcastable::TestHelper
 
   def setup
-    Wallflower.register_kind(:export, title: "Export transactions", runner: "Object")
+    Wallflower.register_task_type(:export, title: "Export transactions", runner: "Object")
   end
 
   def teardown
-    Wallflower.reset_kinds!
+    Wallflower.reset_task_types!
   end
 
   test "a change to a task sends its open page the new status and progress" do
-    task = Wallflower::Task.create!(kind: "export", person: User.create!(name: "Rep"), total: 10)
+    task = Wallflower::Task.create!(task_type: "export", person: User.create!(name: "Rep"), total: 10)
 
     broadcasts = capture_turbo_stream_broadcasts(task) { task.advance(3) }
 
@@ -23,7 +23,7 @@ class Wallflower::TaskBroadcastTest < ActiveSupport::TestCase
   end
 
   test "one broadcast for a task replaces the part its page and its list row share" do
-    task = Wallflower::Task.create!(kind: "export", person: User.create!(name: "Rep"), total: 10)
+    task = Wallflower::Task.create!(task_type: "export", person: User.create!(name: "Rep"), total: 10)
 
     broadcasts = capture_turbo_stream_broadcasts(task) { task.advance }
 
@@ -31,7 +31,7 @@ class Wallflower::TaskBroadcastTest < ActiveSupport::TestCase
   end
 
   test "a change to a running task sends its open page the new time left" do
-    task = Wallflower::Task.create!(kind: "export", person: User.create!(name: "Rep"), status: "running", total: 100, done: 24, started_at: 1.minute.ago)
+    task = Wallflower::Task.create!(task_type: "export", person: User.create!(name: "Rep"), status: "running", total: 100, done: 24, started_at: 1.minute.ago)
 
     broadcasts = travel_to(task.started_at + 1.minute) { capture_turbo_stream_broadcasts(task) { task.advance } }
 
