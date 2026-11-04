@@ -63,4 +63,10 @@ class Wallflower::Generators::UpdateGeneratorTest < ActiveSupport::TestCase
 
     assert_equal 1, migrations_named("add_started_at_to_wallflower_tasks").size
   end
+
+  test "renames an earlier install's column to the task type" do
+    update
+
+    assert_equal 1, migrations_named("rename_wallflower_tasks_kind_to_task_type").size
+  end
 end

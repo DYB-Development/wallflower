@@ -42,12 +42,12 @@ Wallflower.configure do |config|
 end
 ```
 
-## Kinds and runners
+## Task types and runners
 
-A kind is a type of task the app offers, such as an export. Register each one in an initializer with its key, its title and the name of its runner class:
+A task type is a type of task the app offers, such as an export. Register each one in an initializer with its key, its title and the name of its runner class:
 
 ```ruby
-Wallflower.register_kind :export_transactions, title: "Export transactions", runner: "ExportTransactionsRunner"
+Wallflower.register_task_type :export_transactions, title: "Export transactions", runner: "ExportTransactionsRunner"
 ```
 
 An app whose registered runner class does not exist fails to boot, with a message naming the class.
@@ -91,7 +91,7 @@ A finished task's page then offers a Download button. The file is sent through W
 ## Starting a task
 
 ```ruby
-task = Wallflower.start(kind: :export_transactions, person: current_user, account: current_account, params: { "month" => "2026-10" })
+task = Wallflower.start(task_type: :export_transactions, person: current_user, account: current_account, params: { "month" => "2026-10" })
 ```
 
 The task is returned queued and its job is enqueued. When the job runs, the task is marked running, its runner is called, and when the runner returns the task is marked finished with the time it finished.
@@ -110,10 +110,10 @@ With no `on_finish` set, tasks still run to the end.
 
 ## When a task fails
 
-A kind runs one try by default. A kind registered with `tries:` runs again after a raised error until it has used them all, waiting `retry_wait:` seconds between tries, 60 by default:
+A task type runs one try by default. A task type registered with `tries:` runs again after a raised error until it has used them all, waiting `retry_wait:` seconds between tries, 60 by default:
 
 ```ruby
-Wallflower.register_kind :send_price, title: "Send a price", runner: "SendPriceRunner", tries: 3, retry_wait: 60
+Wallflower.register_task_type :send_price, title: "Send a price", runner: "SendPriceRunner", tries: 3, retry_wait: 60
 ```
 
 Between tries the task stays running and `on_finish` does not run. Each try starts its progress and refusals over, so a runner with more than one try must be safe to run again.
@@ -140,11 +140,11 @@ With `keep_for` set, the same sweep deletes each finished or failed task that en
 
 ## The task list
 
-The engine's root lists the tasks the signed-in person started in the current account, newest first. Each row shows the kind's title, the status as a coloured badge, the progress, the time left while it runs and when it was started, links to the task's page, and updates while the task runs.
+The engine's root lists the tasks the signed-in person started in the current account, newest first. Each row shows the task type's title, the status as a coloured badge, the progress, the time left while it runs and when it was started, links to the task's page, and updates while the task runs.
 
 ## The task page
 
-A task's page lives at `tasks/:id` under the engine's mount path. The person who started the task sees its kind's title, its status and, once the runner has set a total, a progress bar of done against total. While the task runs and is at least five percent done, an estimate of the time left sits under the bar, worked out from how fast the task has gone since it started running. The page listens for changes to its task over Turbo Streams, so its status, progress and time left update without a reload, in a browser and in the Hotwire Native iOS app alike. Anyone else, and the same person viewing from another account, gets a not-found response.
+A task's page lives at `tasks/:id` under the engine's mount path. The person who started the task sees its task type's title, its status and, once the runner has set a total, a progress bar of done against total. While the task runs and is at least five percent done, an estimate of the time left sits under the bar, worked out from how fast the task has gone since it started running. The page listens for changes to its task over Turbo Streams, so its status, progress and time left update without a reload, in a browser and in the Hotwire Native iOS app alike. Anyone else, and the same person viewing from another account, gets a not-found response.
 
 The task page and the task list reload in place when they are shown again after being hidden, such as when the iOS app returns from the background, so they show changes broadcast while they could not receive them. A page that stays visible makes no extra request. The copied controller is registered by the host's own Stimulus setup, as `wallflower--catch-up`.
 

@@ -10,20 +10,20 @@ class Wallflower::StartTest < ActiveSupport::TestCase
   end
 
   test "starting a task returns it queued" do
-    task = Wallflower.start(kind: :export, person: person, params: { "month" => "2026-10" })
+    task = Wallflower.start(task_type: :export, person: person, params: { "month" => "2026-10" })
 
     assert_equal "queued", task.status
   end
 
   test "starting a task enqueues the job that runs it" do
-    assert_enqueued_with(job: Wallflower::RunJob) { Wallflower.start(kind: :export, person: person) }
+    assert_enqueued_with(job: Wallflower::RunJob) { Wallflower.start(task_type: :export, person: person) }
   end
 
-  test "starting a task keeps the kind, account and parameters it was given" do
+  test "starting a task keeps the task type, account and parameters it was given" do
     account = Account.create!(name: "Team")
 
-    task = Wallflower.start(kind: :export, person: person, account: account, params: { "month" => "2026-10" })
+    task = Wallflower.start(task_type: :export, person: person, account: account, params: { "month" => "2026-10" })
 
-    assert_equal [ "export", account, { "month" => "2026-10" } ], [ task.reload.kind, task.account, task.params ]
+    assert_equal [ "export", account, { "month" => "2026-10" } ], [ task.reload.task_type, task.account, task.params ]
   end
 end

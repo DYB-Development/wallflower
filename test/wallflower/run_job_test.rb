@@ -45,12 +45,12 @@ class Wallflower::RunJobTest < ActiveSupport::TestCase
   end
 
   def setup
-    Wallflower.register_kind(:export, title: "Export transactions", runner: RecordingRunner.name)
-    Wallflower.register_kind(:broken, title: "Broken export", runner: RaisingRunner.name)
+    Wallflower.register_task_type(:export, title: "Export transactions", runner: RecordingRunner.name)
+    Wallflower.register_task_type(:broken, title: "Broken export", runner: RaisingRunner.name)
   end
 
   def teardown
-    Wallflower.reset_kinds!
+    Wallflower.reset_task_types!
     Wallflower.reset_configuration!
   end
 
@@ -63,7 +63,7 @@ class Wallflower::RunJobTest < ActiveSupport::TestCase
   end
 
   test "the job marks the task running and hands it to the runner with its parameters, person and account" do
-    task = Wallflower::Task.create!(kind: "export", person: person, account: account, params: { "month" => "2026-10" })
+    task = Wallflower::Task.create!(task_type: "export", person: person, account: account, params: { "month" => "2026-10" })
 
     Wallflower::RunJob.perform_now(task)
 
@@ -71,8 +71,8 @@ class Wallflower::RunJobTest < ActiveSupport::TestCase
   end
 
   test "a runner sets the task's total and adds to its done count while it works" do
-    Wallflower.register_kind(:count, title: "Count rows", runner: CountingRunner.name)
-    task = Wallflower::Task.create!(kind: "count", person: person)
+    Wallflower.register_task_type(:count, title: "Count rows", runner: CountingRunner.name)
+    task = Wallflower::Task.create!(task_type: "count", person: person)
 
     Wallflower::RunJob.perform_now(task)
 
@@ -80,7 +80,7 @@ class Wallflower::RunJobTest < ActiveSupport::TestCase
   end
 
   test "a task whose runner returns is marked finished with the time it finished" do
-    task = Wallflower::Task.create!(kind: "export", person: person)
+    task = Wallflower::Task.create!(task_type: "export", person: person)
 
     travel_to(Time.utc(2026, 10, 7, 12, 0, 0)) { Wallflower::RunJob.perform_now(task) }
 
@@ -90,7 +90,7 @@ class Wallflower::RunJobTest < ActiveSupport::TestCase
   test "the host's finish hook runs once with the task when it finishes" do
     finished = []
     Wallflower.configure { |config| config.on_finish = ->(task) { finished << task } }
-    task = Wallflower::Task.create!(kind: "export", person: person)
+    task = Wallflower::Task.create!(task_type: "export", person: person)
 
     Wallflower::RunJob.perform_now(task)
 
@@ -98,7 +98,7 @@ class Wallflower::RunJobTest < ActiveSupport::TestCase
   end
 
   test "a host that configures no finish hook still runs its task to the end" do
-    task = Wallflower::Task.create!(kind: "export", person: person)
+    task = Wallflower::Task.create!(task_type: "export", person: person)
 
     Wallflower::RunJob.perform_now(task)
 
@@ -106,7 +106,7 @@ class Wallflower::RunJobTest < ActiveSupport::TestCase
   end
 
   test "a task whose runner raises is marked failed" do
-    task = Wallflower::Task.create!(kind: "broken", person: person)
+    task = Wallflower::Task.create!(task_type: "broken", person: person)
 
     Wallflower::RunJob.perform_now(task)
 
@@ -114,7 +114,7 @@ class Wallflower::RunJobTest < ActiveSupport::TestCase
   end
 
   test "a failed task keeps the error message its runner raised" do
-    task = Wallflower::Task.create!(kind: "broken", person: person)
+    task = Wallflower::Task.create!(task_type: "broken", person: person)
 
     Wallflower::RunJob.perform_now(task)
 
@@ -127,7 +127,7 @@ class Wallflower::RunJobTest < ActiveSupport::TestCase
     subscriber.define_singleton_method(:report) { |error, **| reported << error.message }
     Rails.error.subscribe(subscriber)
 
-    Wallflower::RunJob.perform_now(Wallflower::Task.create!(kind: "broken", person: person))
+    Wallflower::RunJob.perform_now(Wallflower::Task.create!(task_type: "broken", person: person))
 
     assert_equal [ "Row 4 has no amount" ], reported
   ensure
@@ -138,14 +138,14 @@ class Wallflower::RunJobTest < ActiveSupport::TestCase
     called = []
     Wallflower.configure { |config| config.on_finish = ->(task) { called << task.status } }
 
-    Wallflower::RunJob.perform_now(Wallflower::Task.create!(kind: "broken", person: person))
+    Wallflower::RunJob.perform_now(Wallflower::Task.create!(task_type: "broken", person: person))
 
     assert_equal [ "failed" ], called
   end
 
   test "a finish hook that raises leaves its finished task finished" do
     Wallflower.configure { |config| config.on_finish = ->(_task) { raise "Mail server is down" } }
-    task = Wallflower::Task.create!(kind: "export", person: person)
+    task = Wallflower::Task.create!(task_type: "export", person: person)
 
     begin
       Wallflower::RunJob.perform_now(task)
@@ -157,8 +157,8 @@ class Wallflower::RunJobTest < ActiveSupport::TestCase
   end
 
   test "the final done count is saved when a task finishes however recently progress was last saved" do
-    Wallflower.register_kind(:many, title: "Many rows", runner: ManyRowsRunner.name)
-    task = Wallflower::Task.create!(kind: "many", person: person)
+    Wallflower.register_task_type(:many, title: "Many rows", runner: ManyRowsRunner.name)
+    task = Wallflower::Task.create!(task_type: "many", person: person)
 
     travel_to(Time.current) { Wallflower::RunJob.perform_now(task) }
 
@@ -166,7 +166,7 @@ class Wallflower::RunJobTest < ActiveSupport::TestCase
   end
 
   test "a task whose runner raises records when it ended" do
-    task = Wallflower::Task.create!(kind: "broken", person: person)
+    task = Wallflower::Task.create!(task_type: "broken", person: person)
 
     travel_to(Time.utc(2026, 10, 7, 12, 0, 0)) { Wallflower::RunJob.perform_now(task) }
 
@@ -174,27 +174,27 @@ class Wallflower::RunJobTest < ActiveSupport::TestCase
   end
 
   test "a task records the time it started running" do
-    task = Wallflower::Task.create!(kind: "export", person: person)
+    task = Wallflower::Task.create!(task_type: "export", person: person)
 
     travel_to(Time.utc(2026, 10, 7, 12, 0, 0)) { Wallflower::RunJob.perform_now(task) }
 
     assert_equal Time.utc(2026, 10, 7, 12, 0, 0), task.reload.started_at
   end
 
-  test "a kind with three tries finishes when a later try works" do
+  test "a task type with three tries finishes when a later try works" do
     FailingTwiceRunner.tries = 0
-    Wallflower.register_kind(:flaky, title: "Flaky", runner: FailingTwiceRunner.name, tries: 3)
-    task = Wallflower::Task.create!(kind: "flaky", person: person)
+    Wallflower.register_task_type(:flaky, title: "Flaky", runner: FailingTwiceRunner.name, tries: 3)
+    task = Wallflower::Task.create!(task_type: "flaky", person: person)
 
     perform_enqueued_jobs { Wallflower::RunJob.perform_later(task) }
 
     assert_equal [ "finished", 3 ], [ task.reload.status, FailingTwiceRunner.tries ]
   end
 
-  test "a failed try runs again after the kind's retry wait" do
+  test "a failed try runs again after the task type's retry wait" do
     freeze_time
-    Wallflower.register_kind(:flaky, title: "Flaky", runner: RaisingRunner.name, tries: 3, retry_wait: 60)
-    task = Wallflower::Task.create!(kind: "flaky", person: person)
+    Wallflower.register_task_type(:flaky, title: "Flaky", runner: RaisingRunner.name, tries: 3, retry_wait: 60)
+    task = Wallflower::Task.create!(task_type: "flaky", person: person)
 
     assert_enqueued_with(job: Wallflower::RunJob, at: 60.seconds.from_now) { Wallflower::RunJob.perform_now(task) }
   end
@@ -202,8 +202,8 @@ class Wallflower::RunJobTest < ActiveSupport::TestCase
   test "a failed try with tries left stays running and does not run on_finish" do
     finished = []
     Wallflower.configure { |config| config.on_finish = ->(ended) { finished << ended } }
-    Wallflower.register_kind(:flaky, title: "Flaky", runner: RaisingRunner.name, tries: 3)
-    task = Wallflower::Task.create!(kind: "flaky", person: person)
+    Wallflower.register_task_type(:flaky, title: "Flaky", runner: RaisingRunner.name, tries: 3)
+    task = Wallflower::Task.create!(task_type: "flaky", person: person)
 
     Wallflower::RunJob.perform_now(task)
 
@@ -211,8 +211,8 @@ class Wallflower::RunJobTest < ActiveSupport::TestCase
   end
 
   test "a new try starts its progress and refusals over" do
-    Wallflower.register_kind(:flaky, title: "Flaky", runner: RaisingRunner.name, tries: 2)
-    task = Wallflower::Task.create!(kind: "flaky", person: person)
+    Wallflower.register_task_type(:flaky, title: "Flaky", runner: RaisingRunner.name, tries: 2)
+    task = Wallflower::Task.create!(task_type: "flaky", person: person)
     task.refuse(label: "Row 1", reason: "No amount")
 
     perform_enqueued_jobs { Wallflower::RunJob.perform_later(task) }

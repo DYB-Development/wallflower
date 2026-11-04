@@ -19,7 +19,7 @@ class ExportCsvTest < ActionDispatch::IntegrationTest
   end
 
   test "a person starts the example CSV export and downloads its file once it finishes" do
-    task = Wallflower.start(kind: :export_csv, person: person, params: { "rows" => [ [ "2026-10", 42 ], [ "2026-11", 7 ] ] })
+    task = Wallflower.start(task_type: :export_csv, person: person, params: { "rows" => [ [ "2026-10", 42 ], [ "2026-11", 7 ] ] })
     perform_enqueued_jobs
 
     get "/background/tasks/#{task.id}/download"
@@ -28,7 +28,7 @@ class ExportCsvTest < ActionDispatch::IntegrationTest
   end
 
   test "the example app tells the person their task finished, through the finish hook" do
-    Wallflower.start(kind: :export_csv, person: person, params: { "rows" => [ [ "2026-10", 42 ] ] })
+    Wallflower.start(task_type: :export_csv, person: person, params: { "rows" => [ [ "2026-10", 42 ] ] })
     perform_enqueued_jobs
 
     assert_equal [ "Export to CSV finished" ], Notification.where(user: person).pluck(:message)

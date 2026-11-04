@@ -4,7 +4,7 @@ require "test_helper"
 
 class Wallflower::ProgressTest < ActiveSupport::TestCase
   def task
-    @task ||= Wallflower::Task.create!(kind: "export", person: User.create!(name: "Rep"), total: 10_000)
+    @task ||= Wallflower::Task.create!(task_type: "export", person: User.create!(name: "Rep"), total: 10_000)
   end
 
   def progress_saves_while

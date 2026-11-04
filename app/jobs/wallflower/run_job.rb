@@ -12,10 +12,10 @@ module Wallflower
     def run(task)
       task.refusals.destroy_all
       task.update!(status: "running", started_at: Time.current, done: 0)
-      Wallflower.kind(task.kind).runner.constantize.new.call(task)
+      Wallflower.task_type(task.task_type).runner.constantize.new.call(task)
       task.update!(status: "finished", finished_at: Time.current)
     rescue StandardError => error
-      return retry_job(wait: Wallflower.kind(task.kind).retry_wait) if executions < Wallflower.kind(task.kind).tries
+      return retry_job(wait: Wallflower.task_type(task.task_type).retry_wait) if executions < Wallflower.task_type(task.task_type).tries
 
       task.update!(status: "failed", error_message: error.message, finished_at: Time.current)
       Rails.error.report(error, handled: true, context: { wallflower_task_id: task.id })

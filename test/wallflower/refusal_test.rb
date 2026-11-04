@@ -4,7 +4,7 @@ require "test_helper"
 
 class Wallflower::RefusalTest < ActiveSupport::TestCase
   test "a runner records a refused row with a label for the row and a reason" do
-    task = Wallflower::Task.create!(kind: "import", person: User.create!(name: "Rep"))
+    task = Wallflower::Task.create!(task_type: "import", person: User.create!(name: "Rep"))
 
     task.refuse(label: "Row 4", reason: "Amount is missing")
 

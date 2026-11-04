@@ -5,7 +5,10 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 
 ### Added
-- A kind can be registered with `tries:` and `retry_wait:`, so a task whose runner raises runs again before it is marked failed. A kind runs one try by default.
+- A task type can be registered with `tries:` and `retry_wait:`, so a task whose runner raises runs again before it is marked failed. A task type runs one try by default.
+
+### Changed
+- What was called a kind is now a task type. `Wallflower.register_kind` is `Wallflower.register_task_type`, `Wallflower.start(kind:)` is `Wallflower.start(task_type:)`, and a task's `kind` is its `task_type`. Change those calls, then run `wallflower:update` and migrate to rename the column.
 
 ## [0.4.0] - 2026-11-04
 
