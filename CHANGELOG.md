@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [Unreleased]
+## [0.5.0] - 2026-11-04
 
 ### Added
 - A task type can be registered with `tries:` and `retry_wait:`, so a task whose runner raises runs again before it is marked failed. A task type runs one try by default.
