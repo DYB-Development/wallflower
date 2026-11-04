@@ -190,4 +190,12 @@ class Wallflower::RunJobTest < ActiveSupport::TestCase
 
     assert_equal [ "finished", 3 ], [ task.reload.status, FailingTwiceRunner.tries ]
   end
+
+  test "a failed try runs again after the kind's retry wait" do
+    freeze_time
+    Wallflower.register_kind(:flaky, title: "Flaky", runner: RaisingRunner.name, tries: 3, retry_wait: 60)
+    task = Wallflower::Task.create!(kind: "flaky", person: person)
+
+    assert_enqueued_with(job: Wallflower::RunJob, at: 60.seconds.from_now) { Wallflower::RunJob.perform_now(task) }
+  end
 end
