@@ -209,4 +209,14 @@ class Wallflower::RunJobTest < ActiveSupport::TestCase
 
     assert_equal [ "running", [] ], [ task.reload.status, finished ]
   end
+
+  test "a new try starts its progress and refusals over" do
+    Wallflower.register_kind(:flaky, title: "Flaky", runner: RaisingRunner.name, tries: 2)
+    task = Wallflower::Task.create!(kind: "flaky", person: person)
+    task.refuse(label: "Row 1", reason: "No amount")
+
+    perform_enqueued_jobs { Wallflower::RunJob.perform_later(task) }
+
+    assert_equal [ 3, 0 ], [ task.reload.done, task.refusals.count ]
+  end
 end
