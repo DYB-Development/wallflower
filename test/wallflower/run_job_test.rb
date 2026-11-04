@@ -198,4 +198,15 @@ class Wallflower::RunJobTest < ActiveSupport::TestCase
 
     assert_enqueued_with(job: Wallflower::RunJob, at: 60.seconds.from_now) { Wallflower::RunJob.perform_now(task) }
   end
+
+  test "a failed try with tries left stays running and does not run on_finish" do
+    finished = []
+    Wallflower.configure { |config| config.on_finish = ->(ended) { finished << ended } }
+    Wallflower.register_kind(:flaky, title: "Flaky", runner: RaisingRunner.name, tries: 3)
+    task = Wallflower::Task.create!(kind: "flaky", person: person)
+
+    Wallflower::RunJob.perform_now(task)
+
+    assert_equal [ "running", [] ], [ task.reload.status, finished ]
+  end
 end

@@ -4,7 +4,7 @@ module Wallflower
   class RunJob < ActiveJob::Base
     def perform(task)
       run(task)
-      Wallflower.configuration.on_finish&.call(task)
+      Wallflower.configuration.on_finish&.call(task) if task.status.in?(%w[finished failed])
     end
 
     private
