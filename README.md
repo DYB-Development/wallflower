@@ -110,7 +110,15 @@ With no `on_finish` set, tasks still run to the end.
 
 ## When a task fails
 
-A runner that raises marks its task failed. The task keeps the error's message, its page shows it beside how far the task got, the error is reported through `Rails.error`, and `on_finish` runs once with the failed task.
+A kind runs one try by default. A kind registered with `tries:` runs again after a raised error until it has used them all, waiting `retry_wait:` seconds between tries, 60 by default:
+
+```ruby
+Wallflower.register_kind :send_price, title: "Send a price", runner: "SendPriceRunner", tries: 3, retry_wait: 60
+```
+
+Between tries the task stays running and `on_finish` does not run. Each try starts its progress and refusals over, so a runner with more than one try must be safe to run again.
+
+A runner that raises on its last try marks its task failed. The task keeps the error's message, its page shows it beside how far the task got, the error is reported through `Rails.error`, and `on_finish` runs once with the failed task.
 
 A task still running with no update for longer than `stall_after`, one hour by default, is marked failed by `Wallflower::SweepJob`, with a reason saying it stalled. Schedule the sweep the way the app schedules any recurring job, for example in Solid Queue's `config/recurring.yml`:
 

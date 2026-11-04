@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+
+### Added
+- A kind can be registered with `tries:` and `retry_wait:`, so a task whose runner raises runs again before it is marked failed. A kind runs one try by default.
+
 ## [0.4.0] - 2026-11-04
 
 ### Added

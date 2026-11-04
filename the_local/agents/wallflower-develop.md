@@ -13,7 +13,7 @@ Wallflower tracks long-running work in a Rails app: a person starts a task, foll
 
 ## Interface
 
-- `Wallflower.register_kind` — `Wallflower.register_kind(key, title:, runner:)` registers a type of task, with its key, the title people see, and the name of its runner class.
+- `Wallflower.register_kind` — `Wallflower.register_kind(key, title:, runner:, tries: 1, retry_wait: 60)` registers a type of task, with its key, the title people see, the name of its runner class, how many tries it gets and the seconds between them.
 - `Wallflower.start` — `Wallflower.start(kind:, person:, account: nil, params: {})` creates a queued task, enqueues its job, and returns the task.
 - `set_total` — `task.set_total(total)` saves the number of rows the task will work through.
 - `advance` — `task.advance(by = 1)` adds to the rows done, saving at most once a second.
@@ -79,6 +79,7 @@ Wallflower tracks long-running work in a Rails app: a person starts a task, foll
 - Pass the same person the app treats as the current person, since the task list, the task page and the download answer only that person.
 - When the app has a current account configured, pass that same account, since those pages then show only tasks in that account and a task started with another account or none does not appear.
 - The job sets the task's status, so a runner never sets it. The task is marked running before the runner is called and finished when the runner returns.
-- To fail a task, let a `StandardError` leave the runner. The task is marked failed, its message is stored and shown to the person on the task's page, and the error is reported through `Rails.error`. Write that message for the person reading it, and do not rescue an error the person needs to see, since a runner that returns marks the task finished.
+- A kind with more than one try runs its runner again after a `StandardError`. Between tries the task stays running and each try starts its progress and refusals over, so that runner must be safe to run again.
+- To fail a task, let a `StandardError` leave the runner on its last try. The task is marked failed, its message is stored and shown to the person on the task's page, and the error is reported through `Rails.error`. Write that message for the person reading it, and do not rescue an error the person needs to see, since a runner that returns marks the task finished.
 - A running task with no update for longer than the app's stall time, one hour by default, can be marked failed as stalled. Call `advance` or `set_total` often enough that a slow step does not reach that time.
 - Installing the gem, setting up its pages, its configuration, code that runs when a task finishes, and scheduling stalled-task checks and old-task deletion are out of scope. They belong to the install local.
